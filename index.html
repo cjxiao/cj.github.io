@@ -270,7 +270,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-27T21:37:23+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-27T21:38:32+08:00">
                 2017-12-27
               </time>
             
@@ -324,7 +324,7 @@
 <li>3 zk nodes</li>
 </ul>
 <h1 id="Key-Settings"><a href="#Key-Settings" class="headerlink" title="Key Settings"></a>Key Settings</h1><h2 id="1-Install-JDK-amp-ssh-key-setting"><a href="#1-Install-JDK-amp-ssh-key-setting" class="headerlink" title="1. Install JDK &amp; ssh key setting"></a>1. Install JDK &amp; ssh key setting</h2><p><em>…</em></p>
-<h2 id="2-Conf-files-touched"><a href="#2-Conf-files-touched" class="headerlink" title="2. Conf files touched"></a>2. Conf files touched</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">~/.bashrc</span><br><span class="line">/ect/hosts</span><br><span class="line">etc/hadoop/hadoop-env.sh</span><br><span class="line">etc/hadoop/hdfs-site.xml</span><br><span class="line">etc/hadoop/slaves</span><br><span class="line">etc/hadoop/yarn-site.xml</span><br><span class="line">etc/hadoop/core-site.xml</span><br><span class="line">etc/hadoop/mapred-env.sh</span><br></pre></td></tr></table></figure>
+<h2 id="1-Conf-files-touched"><a href="#1-Conf-files-touched" class="headerlink" title="1. Conf files touched"></a>1. Conf files touched</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">~/.bashrc</span><br><span class="line">/ect/hosts</span><br><span class="line">etc/hadoop/hadoop-env.sh</span><br><span class="line">etc/hadoop/hdfs-site.xml</span><br><span class="line">etc/hadoop/slaves</span><br><span class="line">etc/hadoop/yarn-site.xml</span><br><span class="line">etc/hadoop/core-site.xml</span><br><span class="line">etc/hadoop/mapred-env.sh</span><br></pre></td></tr></table></figure>
 <h2 id="3-Highlight"><a href="#3-Highlight" class="headerlink" title="3. Highlight"></a>3. Highlight</h2><ul>
 <li><p>~/.bashrc:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># to make sudo hadoop/xxx work</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/java/latest</span><br><span class="line"><span class="built_in">export</span> HADOOP_HOME=/usr/<span class="built_in">local</span>/hadoop</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HADOOP_HOME</span>/bin</span><br></pre></td></tr></table></figure>
