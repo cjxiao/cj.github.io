@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="title: Setup Hadoop Cluster with HA    BackgroundJust to play around wiht it    Version CentOS?    hadoop-2.7.4     Topology3 nodes (VMs) in total, with service running on them:     2 namenodes    3">
+<meta name="description" content="BackgroundJust to play around wiht it    Version CentOS?    hadoop-2.7.4     Topology3 nodes (VMs) in total, with service running on them:     2 namenodes    3 datanodes    1 resourcemanager    3 zk n">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CJ&#39;s SpaceX">
+<meta property="og:title" content="Setup Hadoop Cluster with HA">
 <meta property="og:url" content="http://hiack.com/2017/12/27/hadoop_cluster_ha_setup/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="title: Setup Hadoop Cluster with HA    BackgroundJust to play around wiht it    Version CentOS?    hadoop-2.7.4     Topology3 nodes (VMs) in total, with service running on them:     2 namenodes    3">
+<meta property="og:description" content="BackgroundJust to play around wiht it    Version CentOS?    hadoop-2.7.4     Topology3 nodes (VMs) in total, with service running on them:     2 namenodes    3 datanodes    1 resourcemanager    3 zk n">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-27T10:29:55.097Z">
+<meta property="og:updated_time" content="2017-12-27T10:30:32.336Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CJ&#39;s SpaceX">
-<meta name="twitter:description" content="title: Setup Hadoop Cluster with HA    BackgroundJust to play around wiht it    Version CentOS?    hadoop-2.7.4     Topology3 nodes (VMs) in total, with service running on them:     2 namenodes    3">
+<meta name="twitter:title" content="Setup Hadoop Cluster with HA">
+<meta name="twitter:description" content="BackgroundJust to play around wiht it    Version CentOS?    hadoop-2.7.4     Topology3 nodes (VMs) in total, with service running on them:     2 namenodes    3 datanodes    1 resourcemanager    3 zk n">
 
 
 
@@ -125,7 +125,7 @@
 
 
 
-  <title> | CJ's SpaceX</title>
+  <title>Setup Hadoop Cluster with HA | CJ's SpaceX</title>
   
 
 
@@ -259,7 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">Setup Hadoop Cluster with HA</h1>
         
 
         <div class="post-meta">
@@ -271,7 +271,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-27T18:29:55+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-27T18:30:32+08:00">
                 2017-12-27
               </time>
             
@@ -309,8 +309,7 @@
       
 
       
-        <hr>
-<h2 id="title-Setup-Hadoop-Cluster-with-HA"><a href="#title-Setup-Hadoop-Cluster-with-HA" class="headerlink" title="title: Setup Hadoop Cluster with HA    "></a>title: Setup Hadoop Cluster with HA    </h2><h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>Just to play around wiht it   </p>
+        <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>Just to play around wiht it   </p>
 <h1 id="Version"><a href="#Version" class="headerlink" title="Version"></a>Version</h1><ul>
 <li>CentOS?   </li>
 <li>hadoop-2.7.4   </li>
@@ -518,7 +517,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#title-Setup-Hadoop-Cluster-with-HA"><span class="nav-number">1.</span> <span class="nav-text">title: Setup Hadoop Cluster with HA    </span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number"></span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Version"><span class="nav-number"></span> <span class="nav-text">Version</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Topology"><span class="nav-number"></span> <span class="nav-text">Topology</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Key-Settings"><span class="nav-number"></span> <span class="nav-text">Key Settings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-JDK-amp-ssh-key-setting"><span class="nav-number">1.</span> <span class="nav-text">Install JDK &amp; ssh key setting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conf-files-touched"><span class="nav-number">2.</span> <span class="nav-text">Conf files touched</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Setup-Steps"><span class="nav-number">3.</span> <span class="nav-text">Setup Steps</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WebUI"><span class="nav-number"></span> <span class="nav-text">WebUI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number"></span> <span class="nav-text">Reference</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Version"><span class="nav-number">2.</span> <span class="nav-text">Version</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Topology"><span class="nav-number">3.</span> <span class="nav-text">Topology</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Key-Settings"><span class="nav-number">4.</span> <span class="nav-text">Key Settings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-JDK-amp-ssh-key-setting"><span class="nav-number">4.1.</span> <span class="nav-text">Install JDK &amp; ssh key setting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conf-files-touched"><span class="nav-number">4.2.</span> <span class="nav-text">Conf files touched</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Setup-Steps"><span class="nav-number">4.3.</span> <span class="nav-text">Setup Steps</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WebUI"><span class="nav-number">5.</span> <span class="nav-text">WebUI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             
 
           </div>
