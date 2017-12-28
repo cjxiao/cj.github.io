@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="DO NOT have a dot in the file name beneath /etc/sudoers.d!!!It turns out that if you have a dot in the file name, like /etc/sudoers.d/fool.me, then this sudo setting does NOT work!Wasted a lot of time">
+<meta name="description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NO dot in &#x2F;etc&#x2F;sudoers.d&#x2F;filename!!!">
-<meta property="og:url" content="http://hiack.com/2017/12/27/sudoers.d/index.html">
+<meta property="og:title" content="$@ and $* in Bash">
+<meta property="og:url" content="http://hiack.com/2017/12/28/bash_param_forward/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="DO NOT have a dot in the file name beneath /etc/sudoers.d!!!It turns out that if you have a dot in the file name, like /etc/sudoers.d/fool.me, then this sudo setting does NOT work!Wasted a lot of time">
+<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-27T15:04:18.986Z">
+<meta property="og:updated_time" content="2017-12-28T04:23:48.551Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NO dot in &#x2F;etc&#x2F;sudoers.d&#x2F;filename!!!">
-<meta name="twitter:description" content="DO NOT have a dot in the file name beneath /etc/sudoers.d!!!It turns out that if you have a dot in the file name, like /etc/sudoers.d/fool.me, then this sudo setting does NOT work!Wasted a lot of time">
+<meta name="twitter:title" content="$@ and $* in Bash">
+<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2017/12/27/sudoers.d/"/>
+  <link rel="canonical" href="http://hiack.com/2017/12/28/bash_param_forward/"/>
 
 
 
 
 
-  <title>NO dot in /etc/sudoers.d/filename!!! | CJ's SpaceX</title>
+  <title>$@ and $* in Bash | CJ's SpaceX</title>
   
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/27/sudoers.d/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/28/bash_param_forward/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -269,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">NO dot in /etc/sudoers.d/filename!!!</h1>
+          <h1 class="post-title" itemprop="name headline">$@ and $* in Bash</h1>
         
 
         <div class="post-meta">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-27T23:04:18+08:00">
-                2017-12-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T12:23:48+08:00">
+                2017-12-28
               </time>
             
 
@@ -304,8 +304,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/devops/" itemprop="url" rel="index">
-                    <span itemprop="name">DevOps</span>
+                  <a href="/categories/shell/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell</span>
                   </a>
                 </span>
 
@@ -341,7 +341,13 @@
       
 
       
-        <p><strong>DO NOT have a dot in the file name beneath /etc/sudoers.d!!!</strong><br>It turns out that if you have a dot in the file name, like <code>/etc/sudoers.d/fool.me</code>, then this sudo setting does <strong>NOT</strong> work!<br>Wasted a lot of time on it…</p>
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">IFS=:</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"IFS=:"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># List Context, Word Splitting</span></span><br><span class="line"><span class="comment"># $1 $2 $3 ... </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\$*       "</span>   $*</span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1c$2c$3..."</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\"\$*\"     "</span> <span class="string">"$*"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 $2 $3 ... </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\$@       "</span>   <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1" "$2" "$3" ...</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\"\$@\"     "</span> <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Scalar Context, no Word Splitting</span></span><br><span class="line"><span class="comment"># $1c$2c$3...</span></span><br><span class="line">x=$*</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\$*     "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1c$2c$3..."</span></span><br><span class="line">x=<span class="string">"$*"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\"\$*\"   "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 $2 $3...</span></span><br><span class="line">x=<span class="variable">$@</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\$@     "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1 $2 $3..."</span></span><br><span class="line">x=<span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\"\$@\"   "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br></pre></td></tr></table></figure>
+<h1 id="to-sum-up"><a href="#to-sum-up" class="headerlink" title="to sum up"></a>to sum up</h1><ul>
+<li>in Scala Context, $* and $@ are same, except for the delimiter</li>
+<li>generally, we just need “$*” and “$@”, always quoted</li>
+<li>“$*” for a single word</li>
+<li>“$@” for multiple words (the original input params)</li>
+</ul>
 
       
     </div>
@@ -366,15 +372,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/12/28/dash_in_bash/" rel="next" title="Dash in Bash">
+                <i class="fa fa-chevron-left"></i> Dash in Bash
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/28/hadoop_cluster_ha_setup/" rel="prev" title="Setup Hadoop Cluster with HA">
-                Setup Hadoop Cluster with HA <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -426,8 +432,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -480,6 +495,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#to-sum-up"><span class="nav-number">1.</span> <span class="nav-text">to sum up</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
