@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="BackgroundJust play around wiht it Version CentOS-? hadoop-2.7.4  Topology3 nodes (VMs) in total, with service running on them:  2 namenodes 1 resourcemanager 3 datanodes 3 nodemanagers 3 zk nodes  Ke">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-27T16:02:30.231Z">
+<meta property="og:updated_time" content="2017-12-28T05:59:04.949Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Setup Hadoop Cluster with HA">
 <meta name="twitter:description" content="BackgroundJust play around wiht it Version CentOS-? hadoop-2.7.4  Topology3 nodes (VMs) in total, with service running on them:  2 namenodes 1 resourcemanager 3 datanodes 3 nodemanagers 3 zk nodes  Ke">
@@ -281,7 +281,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T00:02:30+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T13:59:04+08:00">
                 2017-12-28
               </time>
             
@@ -400,7 +400,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>On another namenode:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/hdfs namenode -bootstrapStandby</span><br><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/hdfs namenode -bootstrapStandby <span class="comment"># [1st time only]</span></span><br><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>On all datanodes:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/hadoop-daemons.sh start datanode</span><br></pre></td></tr></table></figure>
@@ -468,8 +468,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/27/sudoers.d/" rel="next" title="NO dot in /etc/sudoers.d/filename!!!">
-                <i class="fa fa-chevron-left"></i> NO dot in /etc/sudoers.d/filename!!!
+              <a href="/2017/12/28/bash_param_forward/" rel="next" title="$@ and $* in Bash">
+                <i class="fa fa-chevron-left"></i> $@ and $* in Bash
               </a>
             
           </div>
@@ -477,10 +477,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/28/dash_in_bash/" rel="prev" title="Dash in Bash">
-                Dash in Bash <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
