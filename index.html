@@ -249,7 +249,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/28/hadoop_cluster_ha_setup/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/29/hadoop_cluster_ha_setup/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -268,7 +268,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/28/hadoop_cluster_ha_setup/" itemprop="url">Setup Hadoop Cluster with HA</a></h1>
+                <a class="post-title-link" href="/2017/12/29/hadoop_cluster_ha_setup/" itemprop="url">Setup Hadoop Cluster with HA</a></h1>
         
 
         <div class="post-meta">
@@ -280,8 +280,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T13:59:04+08:00">
-                2017-12-28
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-29T18:40:21+08:00">
+                2017-12-29
               </time>
             
 
@@ -349,9 +349,10 @@
 </ul>
 <h1 id="Topology"><a href="#Topology" class="headerlink" title="Topology"></a>Topology</h1><p>3 nodes (VMs) in total, with service running on them:</p>
 <ul>
-<li>2 namenodes</li>
+<li>2 namenodes (active + standby)</li>
 <li>1 resourcemanager</li>
 <li>3 datanodes</li>
+<li>3 journalnodes</li>
 <li>3 nodemanagers</li>
 <li>3 zk nodes</li>
 </ul>
@@ -398,10 +399,10 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/hdfs namenode -format</span><br><span class="line">bin/hdfs zkfc -formatZK</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>On one namenodes:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># active</span></span><br><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>On another namenode:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/hdfs namenode -bootstrapStandby <span class="comment"># [1st time only]</span></span><br><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># standby</span></span><br><span class="line">bin/hdfs namenode -bootstrapStandby <span class="comment"># [1st time only]</span></span><br><span class="line">sbin/hadoop-daemon.sh start namenode</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>On all datanodes:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/hadoop-daemons.sh start datanode</span><br></pre></td></tr></table></figure>
