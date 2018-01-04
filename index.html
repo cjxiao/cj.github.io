@@ -280,7 +280,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T16:12:17+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:47:23+08:00">
                 2018-01-04
               </time>
             
@@ -342,7 +342,87 @@
       
         
           
-            <p><img src="/content/images/2018/01/mapreduce.png" alt="MapReduce"></p>
+            <h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><p>I don’t read the source code.<br>Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).<br>Some numbers below are just typical values, and they could vary for different versions or due to user settings.</p>
+<p><img src="/content/images/2018/01/mapreduce.png" alt="MapReduce"><br><em>I copied this image from the web (tell me if the author doesn’t want me to do this).</em></p>
+<h1 id="Map-Side"><a href="#Map-Side" class="headerlink" title="Map Side"></a>Map Side</h1><ul>
+<li><strong>InputSplit</strong>   <ul>
+<li>For each inputsplit, MR spawns a Map task.</li>
+<li>The default InputSplit size is as an HDFS block, I think. But this could be set by <em>mapreduce.map.input.length</em>.   </li>
+</ul>
+</li>
+<li><strong>Circular Buffer</strong>   <ul>
+<li>The Map output does not go directly to the disk, but a circular memoery buffer.</li>
+<li>100MB by default; can be changed by <em>mapreduce.task.io.sort.mb</em>.</li>
+<li>When the content of the buffer reaches some threadhold (<em>mapreduce.map.sort.spill.percent</em>, 80% by default), a <strong>spill</strong> will be triggered. (if a map output record is larger than the buffer, it will also trigger a spill).</li>
+</ul>
+</li>
+<li><strong>Spill</strong>   <ul>
+<li>A new thread will be started to spill the buffer records to local disk, in parallel with the mapper, if possible.</li>
+<li>The <strong>spill</strong> stage includes <strong>Partition, Sort and Combine</strong>.</li>
+<li><strong>Partition, Sort and Combine</strong><ul>
+<li>As map outputs are spilled onto local disk, the piece of data (like 80MB) will be paritioned per reducers (typicall, hash &amp; mod), sorted in memory, and combined if enabled (mini-reduce).</li>
+</ul>
+</li>
+<li>Each spill will create a new file on local disk.</li>
+<li>So after the map task has written its last output record, there could be several spill files.</li>
+<li>Before the map task is finished and its output is feteched by Reducer, the spill files will be merged into a single partitioned and sorted output file.<ul>
+<li>The property <strong><em>io.sort.factor</em></strong> will tell the maximum numbers of spill files  that can be merge in one go, which is also used in Reduer Merge Sort. </li>
+<li>It’s said that if there’re 3+ spill files, combiner will be applied again during the creation of the final map output file.</li>
+</ul>
+</li>
+<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will ben compressed (and uncompressed in the Reducer side).</li>
+<li>Now, the map output is a single sorted, partitioned, compact local file, which is ready to be fetched by Reducers via HTTP.<ul>
+<li><strong>Why HTTP?</strong> Because it’s a local file, not HDFS blocks.</li>
+<li>And that’s why if the cluster node failes, all Mapper tasks succeeded on it previously must be re-run, no matter if their outputs are fetched by Reducers, while all succeeded Reducers task don’t need.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Reduce-Side"><a href="#Reduce-Side" class="headerlink" title="Reduce Side"></a>Reduce Side</h1><p>The Reduce stage consists of <strong>Shuffle, Sort (also called Merge) and Reduce</strong>.</p>
+<ul>
+<li><strong>Shuffle</strong><ul>
+<li>Shuffling is the process of copying mapper outpus to reducers.</li>
+<li>When does shuffle start?<ul>
+<li>This can happen while mappers are generating data since it is only a data transfer.</li>
+<li>On the other hand, sort and reduce can only start once all the mappers are done.</li>
+<li>You can tell which one MapReduce is doing by looking at the reducer completion percentage:<ul>
+<li>0-33% means its doing shuffle,</li>
+<li>34-66% is sort,</li>
+<li>67%-100% is reduce.</li>
+</ul>
+</li>
+<li>This is why your reducers will sometimes seem “stuck” at 33%– it’s waiting for mappers to finish.</li>
+</ul>
+</li>
+<li>So, when, exactly?<ul>
+<li>Reducers start shuffling based on a threshold of percentage of mappers that have finished (<em>mapreduce.job.reduce.slowstart.completedmap</em>）.</li>
+</ul>
+</li>
+<li>Reducers starts several threads (5 by default) to fetch mapper outputs in parallel.</li>
+<li>The map outputs are copied to the reduce task JVM’s memory if they are small enough (<em>mapred.job.shuffle.input.buffer.percent</em>); otherwise they are copied to disk .</li>
+</ul>
+</li>
+<li><strong>Merge/Sort</strong><ul>
+<li>When all the map outputs have been copied, the reduce task moves into the <strong>sort</strong> phase (actually <strong>merge sort</strong>), which merges the map outputs, maintaining their sort ordering.</li>
+<li>This is done in rounds.</li>
+<li>For example,<ul>
+<li>if there were 50 map outputs and the merge factor was 10 (<strong>io.sort.factor, just like in the map’s merge</strong>), there would be 5 rounds.</li>
+<li>Each round would merge 10 files into one, so at the end there would be 5 intermediate files.</li>
+<li>Rather than have a final round that merges these 5 files into a single sorted file, the merge saves a trip to disk by directly feeding the reduce function in what is the last phase: the reduce phase.</li>
+<li>This final merge can come from a mixture of in-memory and on-disk segments.</li>
+<li><strong>Note</strong>: the actual merge algorithm is slightly different to this. The last merge round would keep the data in memroy to start the final reduce job.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Reduce</strong><ul>
+<li>During the reduce phase, the reduce function is invoked for each key in the sorted output.</li>
+<li>The output of this phase is written directly to the output filesystem, typically HDFS, in which case the first block replica will generally be written to the local disk managed by the datanode.</li>
+</ul>
+</li>
+</ul>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank" rel="noopener">MapReduce Tutorial</a><br><a href="https://developer.yahoo.com/hadoop/tutorial/module4.html" target="_blank" rel="noopener">Module 4: MapReduce</a><br><a href="http://dailyhadoopsoup.blogspot.com/2014/01/shuffle-and-sort.html" target="_blank" rel="noopener">http://dailyhadoopsoup.blogspot.hk/2014/01/shuffle-and-sort.html</a><br><a href="https://haritbigdata.wordpress.com/2015/07/21/hadoop-inside-mapreduce-process-of-shuffling-sorting-part-ii/" target="_blank" rel="noopener">Hadoop :- Inside MapReduce ( Process of Shuffling , sorting ) – Part II</a><br><a href="https://stackoverflow.com/questions/11672676/when-do-reduce-tasks-start-in-hadoop" target="_blank" rel="noopener">When do reduce tasks start in Hadoop?</a><br><a href="https://stackoverflow.com/questions/22141631/what-is-the-purpose-of-shuffling-and-sorting-phase-in-the-reducer-in-map-reduce" target="_blank" rel="noopener">What is the purpose of shuffling and sorting phase in the reducer in Map Reduce Programming?</a><br><a href="https://www.youtube.com/watch?v=6ehu2jEEXWE" target="_blank" rel="noopener">Shuffle and Sort in hadoop</a></p>
 
           
         
