@@ -87,7 +87,7 @@
 <meta property="og:description" content="NoteI don’t read the source code.Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).Some numbers below are just typical values, and they c">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://hiack.com/content/images/2018/01/mapreduce.png">
-<meta property="og:updated_time" content="2018-01-04T10:49:34.065Z">
+<meta property="og:updated_time" content="2018-01-04T10:52:24.574Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Inside MapReduce (Spill, Shuffle and Sort)">
 <meta name="twitter:description" content="NoteI don’t read the source code.Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).Some numbers below are just typical values, and they c">
@@ -283,7 +283,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:49:34+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:52:24+08:00">
                 2018-01-04
               </time>
             
@@ -371,7 +371,7 @@
 <li>It’s said that if there’re 3+ spill files, combiner will be applied again during the creation of the final map output file.</li>
 </ul>
 </li>
-<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will ben compressed (and uncompressed in the Reducer side).</li>
+<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will be compressed (and uncompressed in the Reducer side).</li>
 <li>Now, the map output is a single sorted, partitioned, compact local file, which is ready to be fetched by Reducers via HTTP.<ul>
 <li><strong>Why HTTP?</strong> Because it’s a local file, not HDFS blocks.</li>
 <li>And that’s why if the cluster node failes, all Mapper tasks succeeded on it previously must be re-run, no matter if their outputs are fetched by Reducers, while all succeeded Reducers task don’t need.</li>

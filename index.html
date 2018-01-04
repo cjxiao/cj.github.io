@@ -280,7 +280,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:49:34+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:52:24+08:00">
                 2018-01-04
               </time>
             
@@ -370,7 +370,7 @@
 <li>It’s said that if there’re 3+ spill files, combiner will be applied again during the creation of the final map output file.</li>
 </ul>
 </li>
-<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will ben compressed (and uncompressed in the Reducer side).</li>
+<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will be compressed (and uncompressed in the Reducer side).</li>
 <li>Now, the map output is a single sorted, partitioned, compact local file, which is ready to be fetched by Reducers via HTTP.<ul>
 <li><strong>Why HTTP?</strong> Because it’s a local file, not HDFS blocks.</li>
 <li>And that’s why if the cluster node failes, all Mapper tasks succeeded on it previously must be re-run, no matter if their outputs are fetched by Reducers, while all succeeded Reducers task don’t need.</li>
