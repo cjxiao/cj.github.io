@@ -280,7 +280,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:55:40+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T22:13:22+08:00">
                 2018-01-04
               </time>
             
@@ -410,8 +410,7 @@
 <li>if there were 50 map outputs and the merge factor was 10 (<strong><em>io.sort.factor</em>, just like in the map’s merge</strong>), there would be 5 rounds.</li>
 <li>Each round would merge 10 files into one, so at the end there would be 5 intermediate files.</li>
 <li>Rather than have a final round that merges these 5 files into a single sorted file, the merge saves a trip to disk by directly feeding the reduce function in what is the last phase: the reduce phase.</li>
-<li>This final merge can come from a mixture of in-memory and on-disk segments.</li>
-<li><strong>Note</strong>: the actual merge algorithm is slightly different to this. The last merge round would keep the data in memroy to start the final reduce job.</li>
+<li>This final merge can come from a mixture of in-memory and on-disk segments, as the last merge round could keep some data in memroy and then start the final reduce job (<strong><em>mapreduce.reduce.input.buffer.percent</em></strong>).</li>
 </ul>
 </li>
 </ul>
