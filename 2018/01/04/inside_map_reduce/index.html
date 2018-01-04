@@ -81,15 +81,15 @@
 
 <meta name="description" content="NoteI don’t read the source code.Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).Some numbers below are just typical values, and they c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MapReduce Disseciton - Shuffle and Sort">
-<meta property="og:url" content="http://hiack.com/2018/01/04/mapreduce_shuffle_sort/index.html">
+<meta property="og:title" content="Inside MapReduce (Spill, Shuffle and Sort)">
+<meta property="og:url" content="http://hiack.com/2018/01/04/inside_map_reduce/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="NoteI don’t read the source code.Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).Some numbers below are just typical values, and they c">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://hiack.com/content/images/2018/01/mapreduce.png">
-<meta property="og:updated_time" content="2018-01-04T10:47:23.191Z">
+<meta property="og:updated_time" content="2018-01-04T10:49:34.065Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MapReduce Disseciton - Shuffle and Sort">
+<meta name="twitter:title" content="Inside MapReduce (Spill, Shuffle and Sort)">
 <meta name="twitter:description" content="NoteI don’t read the source code.Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).Some numbers below are just typical values, and they c">
 <meta name="twitter:image" content="http://hiack.com/content/images/2018/01/mapreduce.png">
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2018/01/04/mapreduce_shuffle_sort/"/>
+  <link rel="canonical" href="http://hiack.com/2018/01/04/inside_map_reduce/"/>
 
 
 
 
 
-  <title>MapReduce Disseciton - Shuffle and Sort | CJ's SpaceX</title>
+  <title>Inside MapReduce (Spill, Shuffle and Sort) | CJ's SpaceX</title>
   
 
 
@@ -254,7 +254,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/04/mapreduce_shuffle_sort/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/04/inside_map_reduce/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -271,7 +271,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MapReduce Disseciton - Shuffle and Sort</h1>
+          <h1 class="post-title" itemprop="name headline">Inside MapReduce (Spill, Shuffle and Sort)</h1>
         
 
         <div class="post-meta">
@@ -283,7 +283,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:47:23+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T18:49:34+08:00">
                 2018-01-04
               </time>
             
