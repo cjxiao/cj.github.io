@@ -280,7 +280,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T22:13:22+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T22:44:14+08:00">
                 2018-01-04
               </time>
             
@@ -347,6 +347,7 @@
 <h1 id="Map-Side"><a href="#Map-Side" class="headerlink" title="Map Side"></a>Map Side</h1><ul>
 <li><strong>InputSplit</strong>   <ul>
 <li>For each inputsplit, MR spawns a Map task.</li>
+<li>The FileSystem blocksize of the input files is treated as an upper bound for input splits (<em>mapreduce.input.fileinputformat.split.minsize</em>).</li>
 <li>The default InputSplit size is as an HDFS block, I think. But this could be set by <em>mapreduce.map.input.length</em>.   </li>
 </ul>
 </li>
