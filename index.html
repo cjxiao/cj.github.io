@@ -280,7 +280,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T18:21:50+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T18:24:38+08:00">
                 2018-01-17
               </time>
             
@@ -358,7 +358,11 @@
 <p>If you want to hard code them in the source code:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.endpoint"</span>, <span class="string">"s3.cn-north-1.amazonaws.com.cn"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.impl"</span>, <span class="string">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.region"</span>, <span class="string">"cn-north-1"</span>)</span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", "********************")</span></span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", "****************************************")</span></span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.access.key"</span>, <span class="string">"********************"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.secret.key"</span>, <span class="string">"****************************************"</span>)</span><br></pre></td></tr></table></figure></p>
 <p>Or, set them in the <code>spark-env.sh</code>.  </p>
 <p>I haven’t made it work in the cluster mode, without mannually coping the jars to the cluster nodes.</p>
-<p><strong>Note: if the input/output args to your Spark application are S3 paths, you might need to specify the paths with schema <code>s3a://...</code></strong>.</p>
+<p><strong>Note:</strong>  </p>
+<ul>
+<li>There’re several ways AWS keys being captured by Spark, like spark-submit config, Spark/bash env, ~/.aws/credentials, etc. Just try it.</li>
+<li>If the input/output args to your Spark application are S3 paths, you might need to specify the paths with schema <strong><code>s3a://...</code></strong></li>
+</ul>
 
           
         
