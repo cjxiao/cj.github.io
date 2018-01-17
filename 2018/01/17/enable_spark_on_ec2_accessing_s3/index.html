@@ -79,13 +79,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="CJ&#39;s SpaceX">
-<meta property="og:url" content="http://hiack.com/categories/hadoop/index.html">
+<meta name="description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer to ClassNo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Enable Spark on AWS EC2 Accessing AWS S3">
+<meta property="og:url" content="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
+<meta property="og:description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer to ClassNo">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-01-17T08:05:20.601Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CJ&#39;s SpaceX">
+<meta name="twitter:title" content="Enable Spark on AWS EC2 Accessing AWS S3">
+<meta name="twitter:description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer to ClassNo">
 
 
 
@@ -115,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/categories/hadoop/"/>
+  <link rel="canonical" href="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/"/>
 
 
 
 
 
-  <title>Category: Hadoop | CJ's SpaceX</title>
+  <title>Enable Spark on AWS EC2 Accessing AWS S3 | CJ's SpaceX</title>
   
 
 
@@ -140,7 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -234,83 +238,167 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Hadoop<small>Category</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/01/16/hadoop_cluster_ha_setup/" itemprop="url">
-              
-                <span itemprop="name">Setup Hadoop Cluster with HA</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Enable Spark on AWS EC2 Accessing AWS S3</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-16T12:21:37+08:00"
-              content="2018-01-16" >
-          01-16
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T16:05:20+08:00">
+                2018-01-17
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark-devops/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark,DevOps</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
+      
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/01/04/inside_map_reduce/" itemprop="url">
-              
-                <span itemprop="name">Inside MapReduce (Spill, Shuffle and Sort)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-04T22:44:14+08:00"
-              content="2018-01-04" >
-          01-04
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
+        <p>I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).<br>And I build a Simple Spark application, which reads from and writes to AWS S3.<br>Regarding the <code>SecurityException</code> issue, refer to <a href="http://hiack.com/2018/01/15/spark_class_not_found/">ClassNotFoundException/SecurityException in Spark+sbt</a>.  </p>
+<p>To enable Spark accessing AWS S3, some config must be taken care of, including:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--deploy-mode client \</span><br><span class="line">--driver-memory 2400m \</span><br><span class="line">--executor-memory 2400m \</span><br><span class="line">--conf spark.executor.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.driver.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version=2 \</span><br><span class="line">--conf spark.speculation=<span class="literal">false</span> \</span><br><span class="line">--conf spark.hadoop.fs.s3a.region=cn-north-1 \</span><br><span class="line">--conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem \</span><br><span class="line">--conf spark.hadoop.fs.s3a.endpoint=s3.cn-north-1.amazonaws.com.cn \</span><br><span class="line">--conf spark.hadoop.fs.s3a.access.key=******************** \</span><br><span class="line">--conf spark.hadoop.fs.s3a.secret.key=**************************************** \</span><br></pre></td></tr></table></figure></p>
+<p>If you want to hard code them in the source code:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.endpoint"</span>, <span class="string">"s3.cn-north-1.amazonaws.com.cn"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.impl"</span>, <span class="string">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.region"</span>, <span class="string">"cn-north-1"</span>)</span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", "********************")</span></span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", "****************************************")</span></span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.access.key"</span>, <span class="string">"********************"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.secret.key"</span>, <span class="string">"****************************************"</span>)</span><br></pre></td></tr></table></figure></p>
+<p>Or, set them in the <code>spark-env.sh</code>.  </p>
+<p>I haven’t made it work in the cluster mode, without mannually coping the jars to the cluster nodes.</p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/16/enable_public_host_name_in_spark_webui/" rel="next" title="Enable Public Host Name in Spark Web UI">
+                <i class="fa fa-chevron-left"></i> Enable Public Host Name in Spark Web UI
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -318,6 +406,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -525,6 +617,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
