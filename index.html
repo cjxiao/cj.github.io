@@ -249,6 +249,310 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/cut_csv_in_dos/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/19/cut_csv_in_dos/" itemprop="url">Weird Result when Cut CSV Files in DOS Format</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T16:57:51+08:00">
+                2018-01-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/shell/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>It happened again.<br>So maybe I should put it down here.  </p>
+<p>I converted a Mac Numbers file to CSV file (whose columns were copied from an Excel file), and the file looks like this in Vim:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[cj ~/Downloads]$ head  xxx.csv</span><br><span class="line">31.19294,121.44045</span><br><span class="line">31.23328,121.47479</span><br><span class="line">31.27414,121.45309</span><br><span class="line">31.19335,121.43978</span><br><span class="line">31.23511,121.49741</span><br></pre></td></tr></table></figure></p>
+<p>But, when you cut it like <code>awk -F&#39;,&#39; &#39;{OFS=&quot;,&quot;; print &quot;[&quot;$2,$1&quot;],&quot;}&#39; xxx.csv</code>, the output looks like this:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[cj ~/Downloads]$ awk -F<span class="string">','</span> <span class="string">'&#123;OFS=","; print "["$2,$1"],"&#125;'</span> xxx.csv | head</span><br><span class="line">,31.19294],</span><br><span class="line">,31.23328],</span><br><span class="line">,31.27414],</span><br><span class="line">,31.19335],</span><br><span class="line">,31.23511],</span><br></pre></td></tr></table></figure></p>
+<p>If you open the file with Vim, you may notice the hint at the bottom: <code>&quot;xxx.csv&quot; [dos] 587L, 11616C</code>.<br>And you just check the file in hex format in Vim, by: <code>:%!xxd</code>, you will find the root cause:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00000000: 3331 2e31 3932 3934 2c31 3231 2e34 3430  31.19294,121.440</span><br><span class="line">00000010: 3435 0d0a 3331 2e32 3333 3238 2c31 3231  45..31.23328,121</span><br></pre></td></tr></table></figure></p>
+<p>Note the <code>0d0a</code>.  </p>
+<p>In Unix format, it looks like:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">00000000: 3331 2e31 3932 3934 2c31 3231 2e34 3430  31.19294,121.440</span><br><span class="line">00000010: 3435 0a33 312e 3233 3332 382c 3132 312e  45.31.23328,121.</span><br><span class="line">00000020: 3437 3437 390a                           47479.</span><br></pre></td></tr></table></figure></p>
+<p>Just <code>0a</code>.  </p>
+<p>So, you just need to <code>dos2unix xxx.csv</code> (<code>brew install dos2unix1</code> if it’s absent).  </p>
+<p>And, a note irrelevant to this topic: <code>sed -n &#39;/18\/01\/17 10:49/,/18\/01\/17 10:55/p&#39; some-service.log</code>, to filter for logs within the date/time range.<br>When I was working in the giant internet company, I used to use this command to check for error logs happened within some time window to debug online issue.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/redirect_with_sudo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/19/redirect_with_sudo/" itemprop="url">Permission Denied when sudo with io redirect</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T16:27:17+08:00">
+                2018-01-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/shell/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p><code>ssh user1@somehost &quot;sudo echo &gt;&gt; /home/user2/xxx&quot;</code> will result in <code>Permission denied</code>.</p>
+<p>The root cause is the redirection is performed by the login shell, which does not have the permission.<br>The redirection of the output is <strong>not</strong> performed by sudo.  </p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><ul>
+<li>Run a shell with sudo and give the command to it by using the <code>-c</code> option:<br><code>sudo sh -c &#39;ls -hal /root/ &gt; /root/test.out&#39;</code></li>
+<li><p>Create a script with your commands and run that script with sudo:  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br></pre></td></tr></table></figure>
+<p>or  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo bash &lt;&lt;EOF</span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>or  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ls -hal /root/ &gt; /root/test.out'</span> | sudo bash</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>For more, refer to <a href="https://stackoverflow.com/questions/82256/how-do-i-use-sudo-to-redirect-output-to-a-location-i-dont-have-permission-to-wr/16514624#16514624" target="_blank" rel="noopener">StackOverflow</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -756,160 +1060,6 @@
 <li>JobHistoryServer:19888</li>
 </ul>
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="http://blog.csdn.net/qianshangding0708/article/details/50372289" target="_blank" rel="noopener">Hadoop2.4.1分布式安装（详细）</a><br><a href="http://blog.csdn.net/Lnho2015/article/details/51423619" target="_blank" rel="noopener">HDFS High Availability体系介绍(Using the Quorum Journal Manager)</a><br><a href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html" target="_blank" rel="noopener">HDFS High Availability Using the Quorum Journal Manager</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/16/redirect_with_sudo/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/16/redirect_with_sudo/" itemprop="url">Permission denied when sudo with io redirect</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T12:15:56+08:00">
-                2018-01-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/shell/" itemprop="url" rel="index">
-                    <span itemprop="name">Shell</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p><code>ssh user1@somehost &quot;sudo echo &gt;&gt; /home/user2/xxx&quot;</code> will result in <code>Permission denied</code>.</p>
-<p>The root cause is the redirection is performed by the login shell, which does not have the permission.<br>The redirection of the output is <strong>not</strong> performed by sudo.  </p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><ul>
-<li>Run a shell with sudo and give the command to it by using the <code>-c</code> option:<br><code>sudo sh -c &#39;ls -hal /root/ &gt; /root/test.out&#39;</code></li>
-<li><p>Create a script with your commands and run that script with sudo:  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br></pre></td></tr></table></figure>
-<p>or  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo bash &lt;&lt;EOF</span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-<p>or  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ls -hal /root/ &gt; /root/test.out'</span> | sudo bash</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>For more, refer to <a href="https://stackoverflow.com/questions/82256/how-do-i-use-sudo-to-redirect-output-to-a-location-i-dont-have-permission-to-wr/16514624#16514624" target="_blank" rel="noopener">StackOverflow</a></p>
 
           
         
@@ -1793,7 +1943,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
