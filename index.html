@@ -451,7 +451,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T17:02:01+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T18:08:56+08:00">
                 2018-01-19
               </time>
             
@@ -572,7 +572,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/201801/redirect_with_sudo/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/201801/enable_public_host_name_in_spark_webui/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -591,7 +591,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/19/201801/redirect_with_sudo/" itemprop="url">Permission Denied when sudo with io redirect</a></h1>
+                <a class="post-title-link" href="/2018/01/11/201801/enable_public_host_name_in_spark_webui/" itemprop="url">Enable Public Host Name in Spark Web UI</a></h1>
         
 
         <div class="post-meta">
@@ -603,8 +603,156 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T16:27:17+08:00">
-                2018-01-19
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-11T18:08:56+08:00">
+                2018-01-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>My Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them.</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><pre><code class="bash"><span class="keyword">for</span> h <span class="keyword">in</span> $(cat slaves)
+<span class="keyword">do</span>
+  ssh &lt;user&gt;@<span class="variable">$h</span> <span class="string">"sudo sh -c \"echo export SPARK_PUBLIC_DNS=<span class="variable">$h</span> &gt;&gt; /path/to/spark/conf/spark-env.sh\""</span>
+<span class="keyword">done</span>
+</code></pre>
+<p>Don’t forget the master server.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/201801/redirect_with_sudo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/11/201801/redirect_with_sudo/" itemprop="url">Permission Denied when sudo with io redirect</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-11T15:08:56+08:00">
+                2018-01-11
               </time>
             
 
@@ -726,7 +874,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/17/201801/enable_spark_on_ec2_accessing_s3/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/10/201801/enable_spark_on_ec2_accessing_s3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -745,7 +893,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/17/201801/enable_spark_on_ec2_accessing_s3/" itemprop="url">Enable Spark on AWS EC2 Accessing AWS S3</a></h1>
+                <a class="post-title-link" href="/2018/01/10/201801/enable_spark_on_ec2_accessing_s3/" itemprop="url">Enable Spark on AWS EC2 Accessing AWS S3</a></h1>
         
 
         <div class="post-meta">
@@ -757,8 +905,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T18:24:38+08:00">
-                2018-01-17
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-10T18:08:56+08:00">
+                2018-01-10
               </time>
             
 
@@ -888,7 +1036,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/16/201801/enable_public_host_name_in_spark_webui/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/03/201801/spark_class_not_found/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -907,7 +1055,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/16/201801/enable_public_host_name_in_spark_webui/" itemprop="url">Enable Public Host Name in Spark Web UI</a></h1>
+                <a class="post-title-link" href="/2018/01/03/201801/spark_class_not_found/" itemprop="url">ClassNotFoundException/SecurityException in Spark+sbt</a></h1>
         
 
         <div class="post-meta">
@@ -919,8 +1067,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T12:42:52+08:00">
-                2018-01-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-03T18:08:56+08:00">
+                2018-01-03
               </time>
             
 
@@ -981,13 +1129,11 @@
       
         
           
-            <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>My Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them.</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><pre><code class="bash"><span class="keyword">for</span> h <span class="keyword">in</span> $(cat slaves)
-<span class="keyword">do</span>
-  ssh &lt;user&gt;@<span class="variable">$h</span> <span class="string">"sudo sh -c \"echo export SPARK_PUBLIC_DNS=<span class="variable">$h</span> &gt;&gt; /path/to/spark/conf/spark-env.sh\""</span>
-<span class="keyword">done</span>
-</code></pre>
-<p>Don’t forget the master server.</p>
+            <p>I tried to run a simple Spark application using <strong>IntelliJ+sbt</strong>, but things never went as you wished.<br>I always got the same error message when I tried to submit the app to the Spark cluster: <code>java.lang.ClassNotFoundException</code>.   </p>
+<p>I tried to change the package name, project structure, etc., but didn’t help.   </p>
+<p>Finally, when I tried to run the app in Spark local, the error message changed to<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.lang.SecurityException: Invalid signature file digest for Manifest main attributes</span><br></pre></td></tr></table></figure></p>
+<p>Then googled it. As a common problem, the workaround is:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -d &lt;your&gt;.jar &apos;META-INF/.SF&apos; &apos;META-INF/.RSA&apos; &apos;META-INF/*SF&apos;</span><br></pre></td></tr></table></figure></p>
+<p>This workaround should be combined into sbt, but I don’t want to stop for it at the moment.</p>
 
           
         
@@ -1036,7 +1182,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/16/201801/hadoop_cluster_ha_setup/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/02/201801/inside_map_reduce/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -1055,7 +1201,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/16/201801/hadoop_cluster_ha_setup/" itemprop="url">Setup Hadoop Cluster with HA</a></h1>
+                <a class="post-title-link" href="/2018/01/02/201801/inside_map_reduce/" itemprop="url">Inside MapReduce (Spill, Shuffle and Sort)</a></h1>
         
 
         <div class="post-meta">
@@ -1067,8 +1213,230 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T12:21:37+08:00">
-                2018-01-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-02T18:08:56+08:00">
+                2018-01-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">Hadoop</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><p>I don’t read the source code.<br>Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).<br>So correct me if I’m wrong.<br>Some numbers below are just typical values, as well as the property names, and they could vary for different versions or due to user settings.</p>
+<p><img src="/content/images/2018/01/mapreduce.png" alt="MapReduce"><br><em>I copied this image from the web (tell me if the author doesn’t want me to do this).</em></p>
+<h1 id="Map-Side"><a href="#Map-Side" class="headerlink" title="Map Side"></a>Map Side</h1><ul>
+<li><strong>InputSplit</strong>   <ul>
+<li>For each inputsplit, MR spawns a Map task.</li>
+<li>The FileSystem blocksize of the input files is treated as an upper bound for input splits (<em>mapreduce.input.fileinputformat.split.minsize</em>).</li>
+<li>The default InputSplit size is as an HDFS block, I think. But this could be set by <em>mapreduce.map.input.length</em>.   </li>
+</ul>
+</li>
+<li><strong>Circular Buffer</strong>   <ul>
+<li>The Map output does not go directly to the disk, but a circular memoery buffer.</li>
+<li>100MB by default; can be changed by <em>mapreduce.task.io.sort.mb</em>.</li>
+<li>When the content of the buffer reaches some threadhold (<em>mapreduce.map.sort.spill.percent</em>, 80% by default), a <strong>spill</strong> will be triggered. (if a map output record is larger than the buffer, it will also trigger a spill).</li>
+</ul>
+</li>
+<li><strong>Spill</strong>   <ul>
+<li>A new thread will be started to spill the buffer records to local disk, in parallel with the mapper, if possible.</li>
+<li>The <strong>spill</strong> stage includes <strong>Partition, Sort and Combine</strong>.</li>
+<li><strong>Partition, Sort and Combine</strong><ul>
+<li>As map outputs are spilled onto local disk, the piece of data (like 80MB) will be paritioned per reducers (typicall, hash &amp; mod), sorted in memory, and combined if enabled (mini-reduce).</li>
+</ul>
+</li>
+<li>Each spill will create a new file on local disk.</li>
+<li>So after the map task has written its last output record, there could be several spill files.</li>
+<li>Before the map task is finished and its output is feteched by Reducer, the spill files will be merged into a single partitioned and sorted output file.<ul>
+<li>The property <strong><em>io.sort.factor</em></strong> will tell the maximum numbers of spill files  that can be merge in one go, which is also used in Reduer Merge Sort. </li>
+<li>It’s said that if there’re 3+ spill files, combiner will be applied again during the creation of the final map output file.</li>
+</ul>
+</li>
+<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will be compressed (and uncompressed in the Reducer side).</li>
+<li>Now, the map output is a single sorted, partitioned, compact local file, which is ready to be fetched by Reducers via HTTP.<ul>
+<li><strong>Why HTTP?</strong> Because it’s a local file, not HDFS blocks.</li>
+<li>And that’s why if the cluster node failes, all Mapper tasks succeeded on it previously must be re-run, no matter if their outputs are fetched by Reducers, while all succeeded Reducers tasks don’t need.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Reduce-Side"><a href="#Reduce-Side" class="headerlink" title="Reduce Side"></a>Reduce Side</h1><p>The Reduce stage consists of <strong>Shuffle, Sort (also called Merge) and Reduce</strong>.</p>
+<ul>
+<li><strong>Shuffle</strong><ul>
+<li>Shuffling is the process of copying mapper outpus to reducers.</li>
+<li>When does shuffle start?<ul>
+<li>This can happen while mappers are generating data since it is only a data transfer.</li>
+<li>On the other hand, sort and reduce can only start once all the mappers are done.</li>
+<li>You can tell which one MapReduce is doing by looking at the reducer completion percentage:<ul>
+<li>0-33% means its doing shuffle,</li>
+<li>34-66% is sort,</li>
+<li>67%-100% is reduce.</li>
+</ul>
+</li>
+<li>This is why your reducers will sometimes seem “stuck” at 33%– it’s waiting for mappers to finish.</li>
+</ul>
+</li>
+<li>So, when, exactly?<ul>
+<li>Reducers start shuffling based on a threshold of percentage of mappers that have finished (<em>mapreduce.job.reduce.slowstart.completedmap</em>）.</li>
+</ul>
+</li>
+<li>Reducers starts several threads (5 by default) to fetch mapper outputs in parallel.</li>
+<li>The map outputs are copied to the reduce task JVM’s memory if they are small enough (<em>mapred.job.shuffle.input.buffer.percent</em>); otherwise they are copied to disk .</li>
+</ul>
+</li>
+<li><strong>Merge/Sort</strong><ul>
+<li>When all the map outputs have been copied, the reduce task moves into the <strong>sort</strong> phase (actually <strong>merge sort</strong>), which merges the map outputs, maintaining their sort ordering.</li>
+<li>This is done in rounds.</li>
+<li>For example,<ul>
+<li>if there were 50 map outputs and the merge factor was 10 (<strong><em>io.sort.factor</em>, just like in the map’s merge</strong>), there would be 5 rounds.</li>
+<li>Each round would merge 10 files into one, so at the end there would be 5 intermediate files.</li>
+<li>Rather than have a final round that merges these 5 files into a single sorted file, the merge saves a trip to disk by directly feeding the reduce function in what is the last phase: the reduce phase.</li>
+<li>This final merge can come from a mixture of in-memory and on-disk segments, as the last merge round could keep some data in memroy and then start the final reduce job (<strong><em>mapreduce.reduce.input.buffer.percent</em></strong>).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Reduce</strong><ul>
+<li>During the reduce phase, the reduce function is invoked for each key in the sorted output.</li>
+<li>The output of this phase is written directly to the output filesystem, typically HDFS, in which case the first block replica will generally be written to the local disk managed by the datanode.</li>
+</ul>
+</li>
+</ul>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank" rel="noopener">MapReduce Tutorial</a><br><a href="https://developer.yahoo.com/hadoop/tutorial/module4.html" target="_blank" rel="noopener">Module 4: MapReduce</a><br><a href="http://dailyhadoopsoup.blogspot.com/2014/01/shuffle-and-sort.html" target="_blank" rel="noopener">http://dailyhadoopsoup.blogspot.hk/2014/01/shuffle-and-sort.html</a><br><a href="https://haritbigdata.wordpress.com/2015/07/21/hadoop-inside-mapreduce-process-of-shuffling-sorting-part-ii/" target="_blank" rel="noopener">Hadoop :- Inside MapReduce ( Process of Shuffling , sorting ) – Part II</a><br><a href="https://stackoverflow.com/questions/11672676/when-do-reduce-tasks-start-in-hadoop" target="_blank" rel="noopener">When do reduce tasks start in Hadoop?</a><br><a href="https://stackoverflow.com/questions/22141631/what-is-the-purpose-of-shuffling-and-sorting-phase-in-the-reducer-in-map-reduce" target="_blank" rel="noopener">What is the purpose of shuffling and sorting phase in the reducer in Map Reduce Programming?</a><br><a href="https://www.youtube.com/watch?v=6ehu2jEEXWE" target="_blank" rel="noopener">Shuffle and Sort in hadoop</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/01/201801/hadoop_cluster_ha_setup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/01/201801/hadoop_cluster_ha_setup/" itemprop="url">Setup Hadoop Cluster with HA</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-01T18:08:56+08:00">
+                2018-01-01
               </time>
             
 
@@ -1281,374 +1649,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/15/201801/spark_class_not_found/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/15/201801/spark_class_not_found/" itemprop="url">ClassNotFoundException/SecurityException in Spark+sbt</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-15T16:58:17+08:00">
-                2018-01-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">Spark</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>I tried to run a simple Spark application using <strong>IntelliJ+sbt</strong>, but things never went as you wished.<br>I always got the same error message when I tried to submit the app to the Spark cluster: <code>java.lang.ClassNotFoundException</code>.   </p>
-<p>I tried to change the package name, project structure, etc., but didn’t help.   </p>
-<p>Finally, when I tried to run the app in Spark local, the error message changed to<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.lang.SecurityException: Invalid signature file digest for Manifest main attributes</span><br></pre></td></tr></table></figure></p>
-<p>Then googled it. As a common problem, the workaround is:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -d &lt;your&gt;.jar &apos;META-INF/.SF&apos; &apos;META-INF/.RSA&apos; &apos;META-INF/*SF&apos;</span><br></pre></td></tr></table></figure></p>
-<p>This workaround should be combined into sbt, but I don’t want to stop for it at the moment.</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/04/201801/inside_map_reduce/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/04/201801/inside_map_reduce/" itemprop="url">Inside MapReduce (Spill, Shuffle and Sort)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-04T22:44:14+08:00">
-                2018-01-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hadoop/" itemprop="url" rel="index">
-                    <span itemprop="name">Hadoop</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><p>I don’t read the source code.<br>Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).<br>So correct me if I’m wrong.<br>Some numbers below are just typical values, as well as the property names, and they could vary for different versions or due to user settings.</p>
-<p><img src="/content/images/2018/01/mapreduce.png" alt="MapReduce"><br><em>I copied this image from the web (tell me if the author doesn’t want me to do this).</em></p>
-<h1 id="Map-Side"><a href="#Map-Side" class="headerlink" title="Map Side"></a>Map Side</h1><ul>
-<li><strong>InputSplit</strong>   <ul>
-<li>For each inputsplit, MR spawns a Map task.</li>
-<li>The FileSystem blocksize of the input files is treated as an upper bound for input splits (<em>mapreduce.input.fileinputformat.split.minsize</em>).</li>
-<li>The default InputSplit size is as an HDFS block, I think. But this could be set by <em>mapreduce.map.input.length</em>.   </li>
-</ul>
-</li>
-<li><strong>Circular Buffer</strong>   <ul>
-<li>The Map output does not go directly to the disk, but a circular memoery buffer.</li>
-<li>100MB by default; can be changed by <em>mapreduce.task.io.sort.mb</em>.</li>
-<li>When the content of the buffer reaches some threadhold (<em>mapreduce.map.sort.spill.percent</em>, 80% by default), a <strong>spill</strong> will be triggered. (if a map output record is larger than the buffer, it will also trigger a spill).</li>
-</ul>
-</li>
-<li><strong>Spill</strong>   <ul>
-<li>A new thread will be started to spill the buffer records to local disk, in parallel with the mapper, if possible.</li>
-<li>The <strong>spill</strong> stage includes <strong>Partition, Sort and Combine</strong>.</li>
-<li><strong>Partition, Sort and Combine</strong><ul>
-<li>As map outputs are spilled onto local disk, the piece of data (like 80MB) will be paritioned per reducers (typicall, hash &amp; mod), sorted in memory, and combined if enabled (mini-reduce).</li>
-</ul>
-</li>
-<li>Each spill will create a new file on local disk.</li>
-<li>So after the map task has written its last output record, there could be several spill files.</li>
-<li>Before the map task is finished and its output is feteched by Reducer, the spill files will be merged into a single partitioned and sorted output file.<ul>
-<li>The property <strong><em>io.sort.factor</em></strong> will tell the maximum numbers of spill files  that can be merge in one go, which is also used in Reduer Merge Sort. </li>
-<li>It’s said that if there’re 3+ spill files, combiner will be applied again during the creation of the final map output file.</li>
-</ul>
-</li>
-<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will be compressed (and uncompressed in the Reducer side).</li>
-<li>Now, the map output is a single sorted, partitioned, compact local file, which is ready to be fetched by Reducers via HTTP.<ul>
-<li><strong>Why HTTP?</strong> Because it’s a local file, not HDFS blocks.</li>
-<li>And that’s why if the cluster node failes, all Mapper tasks succeeded on it previously must be re-run, no matter if their outputs are fetched by Reducers, while all succeeded Reducers tasks don’t need.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="Reduce-Side"><a href="#Reduce-Side" class="headerlink" title="Reduce Side"></a>Reduce Side</h1><p>The Reduce stage consists of <strong>Shuffle, Sort (also called Merge) and Reduce</strong>.</p>
-<ul>
-<li><strong>Shuffle</strong><ul>
-<li>Shuffling is the process of copying mapper outpus to reducers.</li>
-<li>When does shuffle start?<ul>
-<li>This can happen while mappers are generating data since it is only a data transfer.</li>
-<li>On the other hand, sort and reduce can only start once all the mappers are done.</li>
-<li>You can tell which one MapReduce is doing by looking at the reducer completion percentage:<ul>
-<li>0-33% means its doing shuffle,</li>
-<li>34-66% is sort,</li>
-<li>67%-100% is reduce.</li>
-</ul>
-</li>
-<li>This is why your reducers will sometimes seem “stuck” at 33%– it’s waiting for mappers to finish.</li>
-</ul>
-</li>
-<li>So, when, exactly?<ul>
-<li>Reducers start shuffling based on a threshold of percentage of mappers that have finished (<em>mapreduce.job.reduce.slowstart.completedmap</em>）.</li>
-</ul>
-</li>
-<li>Reducers starts several threads (5 by default) to fetch mapper outputs in parallel.</li>
-<li>The map outputs are copied to the reduce task JVM’s memory if they are small enough (<em>mapred.job.shuffle.input.buffer.percent</em>); otherwise they are copied to disk .</li>
-</ul>
-</li>
-<li><strong>Merge/Sort</strong><ul>
-<li>When all the map outputs have been copied, the reduce task moves into the <strong>sort</strong> phase (actually <strong>merge sort</strong>), which merges the map outputs, maintaining their sort ordering.</li>
-<li>This is done in rounds.</li>
-<li>For example,<ul>
-<li>if there were 50 map outputs and the merge factor was 10 (<strong><em>io.sort.factor</em>, just like in the map’s merge</strong>), there would be 5 rounds.</li>
-<li>Each round would merge 10 files into one, so at the end there would be 5 intermediate files.</li>
-<li>Rather than have a final round that merges these 5 files into a single sorted file, the merge saves a trip to disk by directly feeding the reduce function in what is the last phase: the reduce phase.</li>
-<li>This final merge can come from a mixture of in-memory and on-disk segments, as the last merge round could keep some data in memroy and then start the final reduce job (<strong><em>mapreduce.reduce.input.buffer.percent</em></strong>).</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>Reduce</strong><ul>
-<li>During the reduce phase, the reduce function is invoked for each key in the sorted output.</li>
-<li>The output of this phase is written directly to the output filesystem, typically HDFS, in which case the first block replica will generally be written to the local disk managed by the datanode.</li>
-</ul>
-</li>
-</ul>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank" rel="noopener">MapReduce Tutorial</a><br><a href="https://developer.yahoo.com/hadoop/tutorial/module4.html" target="_blank" rel="noopener">Module 4: MapReduce</a><br><a href="http://dailyhadoopsoup.blogspot.com/2014/01/shuffle-and-sort.html" target="_blank" rel="noopener">http://dailyhadoopsoup.blogspot.hk/2014/01/shuffle-and-sort.html</a><br><a href="https://haritbigdata.wordpress.com/2015/07/21/hadoop-inside-mapreduce-process-of-shuffling-sorting-part-ii/" target="_blank" rel="noopener">Hadoop :- Inside MapReduce ( Process of Shuffling , sorting ) – Part II</a><br><a href="https://stackoverflow.com/questions/11672676/when-do-reduce-tasks-start-in-hadoop" target="_blank" rel="noopener">When do reduce tasks start in Hadoop?</a><br><a href="https://stackoverflow.com/questions/22141631/what-is-the-purpose-of-shuffling-and-sorting-phase-in-the-reducer-in-map-reduce" target="_blank" rel="noopener">What is the purpose of shuffling and sorting phase in the reducer in Map Reduce Programming?</a><br><a href="https://www.youtube.com/watch?v=6ehu2jEEXWE" target="_blank" rel="noopener">Shuffle and Sort in hadoop</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/28/201712/bash_param_forward/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1680,7 +1680,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T12:27:10+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T12:27:00+08:00">
                 2017-12-28
               </time>
             
@@ -1829,7 +1829,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T11:31:54+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T11:31:00+08:00">
                 2017-12-28
               </time>
             
