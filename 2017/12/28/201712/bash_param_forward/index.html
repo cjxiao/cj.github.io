@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="Problemssh user1@somehost &amp;quot;sudo echo &amp;gt;&amp;gt; /home/user2/xxx&amp;quot; will result in Permission denied. The root cause is the redirection is performed by the login shell, which does not have the pe">
+<meta name="description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Permission Denied when sudo with io redirect">
-<meta property="og:url" content="http://hiack.com/2018/01/19/redirect_with_sudo/index.html">
+<meta property="og:title" content="$@ and $* in Bash">
+<meta property="og:url" content="http://hiack.com/2017/12/28/201712/bash_param_forward/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="Problemssh user1@somehost &amp;quot;sudo echo &amp;gt;&amp;gt; /home/user2/xxx&amp;quot; will result in Permission denied. The root cause is the redirection is performed by the login shell, which does not have the pe">
+<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-01-19T08:27:17.680Z">
+<meta property="og:updated_time" content="2017-12-28T04:27:10.243Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Permission Denied when sudo with io redirect">
-<meta name="twitter:description" content="Problemssh user1@somehost &amp;quot;sudo echo &amp;gt;&amp;gt; /home/user2/xxx&amp;quot; will result in Permission denied. The root cause is the redirection is performed by the login shell, which does not have the pe">
+<meta name="twitter:title" content="$@ and $* in Bash">
+<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2018/01/19/redirect_with_sudo/"/>
+  <link rel="canonical" href="http://hiack.com/2017/12/28/201712/bash_param_forward/"/>
 
 
 
 
 
-  <title>Permission Denied when sudo with io redirect | CJ's SpaceX</title>
+  <title>$@ and $* in Bash | CJ's SpaceX</title>
   
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/redirect_with_sudo/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/28/201712/bash_param_forward/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -269,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Permission Denied when sudo with io redirect</h1>
+          <h1 class="post-title" itemprop="name headline">$@ and $* in Bash</h1>
         
 
         <div class="post-meta">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T16:27:17+08:00">
-                2018-01-19
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T12:27:10+08:00">
+                2017-12-28
               </time>
             
 
@@ -341,19 +341,14 @@
       
 
       
-        <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p><code>ssh user1@somehost &quot;sudo echo &gt;&gt; /home/user2/xxx&quot;</code> will result in <code>Permission denied</code>.</p>
-<p>The root cause is the redirection is performed by the login shell, which does not have the permission.<br>The redirection of the output is <strong>not</strong> performed by sudo.  </p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><ul>
-<li>Run a shell with sudo and give the command to it by using the <code>-c</code> option:<br><code>sudo sh -c &#39;ls -hal /root/ &gt; /root/test.out&#39;</code></li>
-<li><p>Create a script with your commands and run that script with sudo:  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br></pre></td></tr></table></figure>
-<p>or  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo bash &lt;&lt;EOF</span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-<p>or  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ls -hal /root/ &gt; /root/test.out'</span> | sudo bash</span><br></pre></td></tr></table></figure>
-</li>
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">IFS=:</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"IFS=:"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># List Context, Word Splitting</span></span><br><span class="line"><span class="comment"># $1 $2 $3 ... </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\$*       "</span>   $*</span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1c$2c$3..."</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\"\$*\"     "</span> <span class="string">"$*"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 $2 $3 ... </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\$@       "</span>   <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1" "$2" "$3" ...</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\"\$@\"     "</span> <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Scalar Context, no Word Splitting</span></span><br><span class="line"><span class="comment"># $1c$2c$3...</span></span><br><span class="line">x=$*</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\$*     "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1c$2c$3..."</span></span><br><span class="line">x=<span class="string">"$*"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\"\$*\"   "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 $2 $3...</span></span><br><span class="line">x=<span class="variable">$@</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\$@     "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1 $2 $3..."</span></span><br><span class="line">x=<span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\"\$@\"   "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br></pre></td></tr></table></figure>
+<h1 id="to-sum-up"><a href="#to-sum-up" class="headerlink" title="to sum up"></a>to sum up</h1><ul>
+<li>in Scala Context, $* and $@ are same, except for the delimiter</li>
+<li>generally, we just need “$*” and “$@”, always quoted</li>
+<li>“$*” for a single word</li>
+<li>“$@” for multiple words (the original input params)</li>
 </ul>
-<p>For more, refer to <a href="https://stackoverflow.com/questions/82256/how-do-i-use-sudo-to-redirect-output-to-a-location-i-dont-have-permission-to-wr/16514624#16514624" target="_blank" rel="noopener">StackOverflow</a></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><a href="http://www.cnblogs.com/ziyunfei/p/4808530.html" target="_blank" rel="noopener">再谈 $* 和 $@ 在 Bash 中的表现</a></p>
 
       
     </div>
@@ -378,8 +373,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/17/enable_spark_on_ec2_accessing_s3/" rel="next" title="Enable Spark on AWS EC2 Accessing AWS S3">
-                <i class="fa fa-chevron-left"></i> Enable Spark on AWS EC2 Accessing AWS S3
+              <a href="/2017/12/28/201712/dash_in_bash/" rel="next" title="Dash in Bash">
+                <i class="fa fa-chevron-left"></i> Dash in Bash
               </a>
             
           </div>
@@ -388,8 +383,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/19/cut_csv_in_dos/" rel="prev" title="Weird Result when Cut CSV Files in DOS Format">
-                Weird Result when Cut CSV Files in DOS Format <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/04/201801/inside_map_reduce/" rel="prev" title="Inside MapReduce (Spill, Shuffle and Sort)">
+                Inside MapReduce (Spill, Shuffle and Sort) <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -515,7 +510,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Problem"><span class="nav-number">1.</span> <span class="nav-text">Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solution"><span class="nav-number">2.</span> <span class="nav-text">Solution</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#to-sum-up"><span class="nav-number">1.</span> <span class="nav-text">to sum up</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">2.</span> <span class="nav-text">reference</span></a></li></ol></div>
             
 
           </div>

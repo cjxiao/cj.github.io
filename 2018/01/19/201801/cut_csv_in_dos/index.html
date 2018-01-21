@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="123#!/bin/bash -# ... The bare option - says that there are no more shell options; this is a security feature to prevent certain kinds of spoofing attacks.">
+<meta name="description" content="It happened again.So maybe I should put it down here.   I converted a Mac Numbers file to CSV file (whose columns were copied from an Excel file), and the file looks like this in Vim:123456[cj ~/Downl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dash in Bash">
-<meta property="og:url" content="http://hiack.com/2017/12/28/dash_in_bash/index.html">
+<meta property="og:title" content="Weird Result when Cut CSV Files in DOS Format">
+<meta property="og:url" content="http://hiack.com/2018/01/19/201801/cut_csv_in_dos/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="123#!/bin/bash -# ... The bare option - says that there are no more shell options; this is a security feature to prevent certain kinds of spoofing attacks.">
+<meta property="og:description" content="It happened again.So maybe I should put it down here.   I converted a Mac Numbers file to CSV file (whose columns were copied from an Excel file), and the file looks like this in Vim:123456[cj ~/Downl">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-28T03:31:54.086Z">
+<meta property="og:updated_time" content="2018-01-19T09:02:01.318Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dash in Bash">
-<meta name="twitter:description" content="123#!/bin/bash -# ... The bare option - says that there are no more shell options; this is a security feature to prevent certain kinds of spoofing attacks.">
+<meta name="twitter:title" content="Weird Result when Cut CSV Files in DOS Format">
+<meta name="twitter:description" content="It happened again.So maybe I should put it down here.   I converted a Mac Numbers file to CSV file (whose columns were copied from an Excel file), and the file looks like this in Vim:123456[cj ~/Downl">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2017/12/28/dash_in_bash/"/>
+  <link rel="canonical" href="http://hiack.com/2018/01/19/201801/cut_csv_in_dos/"/>
 
 
 
 
 
-  <title>Dash in Bash | CJ's SpaceX</title>
+  <title>Weird Result when Cut CSV Files in DOS Format | CJ's SpaceX</title>
   
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/28/dash_in_bash/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/201801/cut_csv_in_dos/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -269,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Dash in Bash</h1>
+          <h1 class="post-title" itemprop="name headline">Weird Result when Cut CSV Files in DOS Format</h1>
         
 
         <div class="post-meta">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T11:31:54+08:00">
-                2017-12-28
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T17:02:01+08:00">
+                2018-01-19
               </time>
             
 
@@ -341,8 +341,17 @@
       
 
       
-        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash -</span><br><span class="line"></span><br><span class="line"># ...</span><br></pre></td></tr></table></figure>
-<p>The bare option - says that there are no more shell options; this is a security feature to prevent certain kinds of spoofing attacks.</p>
+        <p>It happened again.<br>So maybe I should put it down here.  </p>
+<p>I converted a Mac Numbers file to CSV file (whose columns were copied from an Excel file), and the file looks like this in Vim:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[cj ~/Downloads]$ head  xxx.csv</span><br><span class="line">31.19294,121.44045</span><br><span class="line">31.23328,121.47479</span><br><span class="line">31.27414,121.45309</span><br><span class="line">31.19335,121.43978</span><br><span class="line">31.23511,121.49741</span><br></pre></td></tr></table></figure></p>
+<p>But, when you cut it, the output looks like this:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[cj ~/Downloads]$ awk -F<span class="string">','</span> <span class="string">'&#123;OFS=","; print "["$2,$1"],"&#125;'</span> xxx.csv | head</span><br><span class="line">,31.19294],</span><br><span class="line">,31.23328],</span><br><span class="line">,31.27414],</span><br><span class="line">,31.19335],</span><br><span class="line">,31.23511],</span><br></pre></td></tr></table></figure></p>
+<p>If you open the file with Vim, you may notice the hint at the bottom: <code>&quot;xxx.csv&quot; [dos] 587L, 11616C</code>.<br>And you just check the file in hex format in Vim, by: <code>:%!xxd</code>, you will find the root cause:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00000000: 3331 2e31 3932 3934 2c31 3231 2e34 3430  31.19294,121.440</span><br><span class="line">00000010: 3435 0d0a 3331 2e32 3333 3238 2c31 3231  45..31.23328,121</span><br></pre></td></tr></table></figure></p>
+<p>Note the <code>0d0a</code>.  </p>
+<p>In Unix format, it looks like:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">00000000: 3331 2e31 3932 3934 2c31 3231 2e34 3430  31.19294,121.440</span><br><span class="line">00000010: 3435 0a33 312e 3233 3332 382c 3132 312e  45.31.23328,121.</span><br><span class="line">00000020: 3437 3437 390a                           47479.</span><br></pre></td></tr></table></figure></p>
+<p>Just <code>0a</code>.  </p>
+<p>So, you just need to <code>dos2unix xxx.csv</code> (<code>brew install dos2unix1</code> if it’s absent).  </p>
+<p>And, a note irrelevant to this topic:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -n <span class="string">'/18\/01\/17 10:49/,/18\/01\/17 10:55/p'</span> some-service.log</span><br></pre></td></tr></table></figure></p>
+<p>, to filter for logs within the date/time range.  </p>
+<p>When I was working in the giant internet company, I used to use this command to check for error logs happened within some time window to debug online issue.</p>
 
       
     </div>
@@ -367,8 +376,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/27/sudoers.d/" rel="next" title="NO dot in /etc/sudoers.d/filename!!!">
-                <i class="fa fa-chevron-left"></i> NO dot in /etc/sudoers.d/filename!!!
+              <a href="/2018/01/19/201801/redirect_with_sudo/" rel="next" title="Permission Denied when sudo with io redirect">
+                <i class="fa fa-chevron-left"></i> Permission Denied when sudo with io redirect
               </a>
             
           </div>
@@ -376,10 +385,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/28/bash_param_forward/" rel="prev" title="$@ and $* in Bash">
-                $@ and $* in Bash <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

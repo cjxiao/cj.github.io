@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="ProblemMy Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them. Solutionfor h">
+<meta name="description" content="Problemssh user1@somehost &amp;quot;sudo echo &amp;gt;&amp;gt; /home/user2/xxx&amp;quot; will result in Permission denied. The root cause is the redirection is performed by the login shell, which does not have the pe">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Enable Public Host Name in Spark Web UI">
-<meta property="og:url" content="http://hiack.com/2018/01/16/enable_public_host_name_in_spark_webui/index.html">
+<meta property="og:title" content="Permission Denied when sudo with io redirect">
+<meta property="og:url" content="http://hiack.com/2018/01/19/201801/redirect_with_sudo/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="ProblemMy Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them. Solutionfor h">
+<meta property="og:description" content="Problemssh user1@somehost &amp;quot;sudo echo &amp;gt;&amp;gt; /home/user2/xxx&amp;quot; will result in Permission denied. The root cause is the redirection is performed by the login shell, which does not have the pe">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-01-16T04:42:52.392Z">
+<meta property="og:updated_time" content="2018-01-19T08:27:17.680Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Enable Public Host Name in Spark Web UI">
-<meta name="twitter:description" content="ProblemMy Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them. Solutionfor h">
+<meta name="twitter:title" content="Permission Denied when sudo with io redirect">
+<meta name="twitter:description" content="Problemssh user1@somehost &amp;quot;sudo echo &amp;gt;&amp;gt; /home/user2/xxx&amp;quot; will result in Permission denied. The root cause is the redirection is performed by the login shell, which does not have the pe">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2018/01/16/enable_public_host_name_in_spark_webui/"/>
+  <link rel="canonical" href="http://hiack.com/2018/01/19/201801/redirect_with_sudo/"/>
 
 
 
 
 
-  <title>Enable Public Host Name in Spark Web UI | CJ's SpaceX</title>
+  <title>Permission Denied when sudo with io redirect | CJ's SpaceX</title>
   
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/16/enable_public_host_name_in_spark_webui/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/201801/redirect_with_sudo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -269,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Enable Public Host Name in Spark Web UI</h1>
+          <h1 class="post-title" itemprop="name headline">Permission Denied when sudo with io redirect</h1>
         
 
         <div class="post-meta">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-16T12:42:52+08:00">
-                2018-01-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-19T16:27:17+08:00">
+                2018-01-19
               </time>
             
 
@@ -304,8 +304,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">Spark</span>
+                  <a href="/categories/shell/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell</span>
                   </a>
                 </span>
 
@@ -341,13 +341,19 @@
       
 
       
-        <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>My Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them.</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><pre><code class="bash"><span class="keyword">for</span> h <span class="keyword">in</span> $(cat slaves)
-<span class="keyword">do</span>
-  ssh &lt;user&gt;@<span class="variable">$h</span> <span class="string">"sudo sh -c \"echo export SPARK_PUBLIC_DNS=<span class="variable">$h</span> &gt;&gt; /path/to/spark/conf/spark-env.sh\""</span>
-<span class="keyword">done</span>
-</code></pre>
-<p>Don’t forget the master server.</p>
+        <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p><code>ssh user1@somehost &quot;sudo echo &gt;&gt; /home/user2/xxx&quot;</code> will result in <code>Permission denied</code>.</p>
+<p>The root cause is the redirection is performed by the login shell, which does not have the permission.<br>The redirection of the output is <strong>not</strong> performed by sudo.  </p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><ul>
+<li>Run a shell with sudo and give the command to it by using the <code>-c</code> option:<br><code>sudo sh -c &#39;ls -hal /root/ &gt; /root/test.out&#39;</code></li>
+<li><p>Create a script with your commands and run that script with sudo:  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br></pre></td></tr></table></figure>
+<p>or  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo bash &lt;&lt;EOF</span><br><span class="line">ls -hal /root/ &gt; /root/test.out</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>or  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ls -hal /root/ &gt; /root/test.out'</span> | sudo bash</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>For more, refer to <a href="https://stackoverflow.com/questions/82256/how-do-i-use-sudo-to-redirect-output-to-a-location-i-dont-have-permission-to-wr/16514624#16514624" target="_blank" rel="noopener">StackOverflow</a></p>
 
       
     </div>
@@ -372,8 +378,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/16/hadoop_cluster_ha_setup/" rel="next" title="Setup Hadoop Cluster with HA">
-                <i class="fa fa-chevron-left"></i> Setup Hadoop Cluster with HA
+              <a href="/2018/01/17/201801/enable_spark_on_ec2_accessing_s3/" rel="next" title="Enable Spark on AWS EC2 Accessing AWS S3">
+                <i class="fa fa-chevron-left"></i> Enable Spark on AWS EC2 Accessing AWS S3
               </a>
             
           </div>
@@ -382,8 +388,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/17/enable_spark_on_ec2_accessing_s3/" rel="prev" title="Enable Spark on AWS EC2 Accessing AWS S3">
-                Enable Spark on AWS EC2 Accessing AWS S3 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/19/201801/cut_csv_in_dos/" rel="prev" title="Weird Result when Cut CSV Files in DOS Format">
+                Weird Result when Cut CSV Files in DOS Format <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

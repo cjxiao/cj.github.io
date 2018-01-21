@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
+<meta name="description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer t">
 <meta property="og:type" content="article">
-<meta property="og:title" content="$@ and $* in Bash">
-<meta property="og:url" content="http://hiack.com/2017/12/28/bash_param_forward/index.html">
+<meta property="og:title" content="Enable Spark on AWS EC2 Accessing AWS S3">
+<meta property="og:url" content="http://hiack.com/2018/01/17/201801/enable_spark_on_ec2_accessing_s3/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
+<meta property="og:description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer t">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-12-28T04:27:10.243Z">
+<meta property="og:updated_time" content="2018-01-17T10:24:38.284Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="$@ and $* in Bash">
-<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435#!/bin/bashIFS=:echo &quot;IFS=:&quot;# List Context, Word Splitting# $1 $2 $3 ... echo &quot;\$*       &quot;   $*# &quot;$1c$2c$3...&quot;echo &quot;\&quot;\$*\&quot;     &quot; &quot;$*&quot;# $1">
+<meta name="twitter:title" content="Enable Spark on AWS EC2 Accessing AWS S3">
+<meta name="twitter:description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer t">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2017/12/28/bash_param_forward/"/>
+  <link rel="canonical" href="http://hiack.com/2018/01/17/201801/enable_spark_on_ec2_accessing_s3/"/>
 
 
 
 
 
-  <title>$@ and $* in Bash | CJ's SpaceX</title>
+  <title>Enable Spark on AWS EC2 Accessing AWS S3 | CJ's SpaceX</title>
   
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/28/bash_param_forward/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/17/201801/enable_spark_on_ec2_accessing_s3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -269,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">$@ and $* in Bash</h1>
+          <h1 class="post-title" itemprop="name headline">Enable Spark on AWS EC2 Accessing AWS S3</h1>
         
 
         <div class="post-meta">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-28T12:27:10+08:00">
-                2017-12-28
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T18:24:38+08:00">
+                2018-01-17
               </time>
             
 
@@ -304,8 +304,19 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/shell/" itemprop="url" rel="index">
-                    <span itemprop="name">Shell</span>
+                  <a href="/categories/spark/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/devops/" itemprop="url" rel="index">
+                    <span itemprop="name">DevOps</span>
                   </a>
                 </span>
 
@@ -341,14 +352,16 @@
       
 
       
-        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">IFS=:</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"IFS=:"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># List Context, Word Splitting</span></span><br><span class="line"><span class="comment"># $1 $2 $3 ... </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\$*       "</span>   $*</span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1c$2c$3..."</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\"\$*\"     "</span> <span class="string">"$*"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 $2 $3 ... </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\$@       "</span>   <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1" "$2" "$3" ...</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"\"\$@\"     "</span> <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Scalar Context, no Word Splitting</span></span><br><span class="line"><span class="comment"># $1c$2c$3...</span></span><br><span class="line">x=$*</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\$*     "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1c$2c$3..."</span></span><br><span class="line">x=<span class="string">"$*"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\"\$*\"   "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $1 $2 $3...</span></span><br><span class="line">x=<span class="variable">$@</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\$@     "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># "$1 $2 $3..."</span></span><br><span class="line">x=<span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"x=\"\$@\"   "</span>   <span class="string">"<span class="variable">$x</span>"</span></span><br></pre></td></tr></table></figure>
-<h1 id="to-sum-up"><a href="#to-sum-up" class="headerlink" title="to sum up"></a>to sum up</h1><ul>
-<li>in Scala Context, $* and $@ are same, except for the delimiter</li>
-<li>generally, we just need “$*” and “$@”, always quoted</li>
-<li>“$*” for a single word</li>
-<li>“$@” for multiple words (the original input params)</li>
+        <p>I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).<br>And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.<br>Regarding the <code>SecurityException</code> issue, refer to <a href="http://hiack.com/2018/01/15/spark_class_not_found/">ClassNotFoundException/SecurityException in Spark+sbt</a>.  </p>
+<p>To enable Spark accessing AWS S3, some config must be taken care of, including:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--deploy-mode client \</span><br><span class="line">--driver-memory 2400m \</span><br><span class="line">--executor-memory 2400m \</span><br><span class="line">--conf spark.executor.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.driver.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version=2 \</span><br><span class="line">--conf spark.speculation=<span class="literal">false</span> \</span><br><span class="line">--conf spark.hadoop.fs.s3a.region=cn-north-1 \</span><br><span class="line">--conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem \</span><br><span class="line">--conf spark.hadoop.fs.s3a.endpoint=s3.cn-north-1.amazonaws.com.cn \</span><br><span class="line">--conf spark.hadoop.fs.s3a.access.key=******************** \</span><br><span class="line">--conf spark.hadoop.fs.s3a.secret.key=**************************************** \</span><br></pre></td></tr></table></figure></p>
+<p>If you want to hard code them in the source code:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.endpoint"</span>, <span class="string">"s3.cn-north-1.amazonaws.com.cn"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.impl"</span>, <span class="string">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.region"</span>, <span class="string">"cn-north-1"</span>)</span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", "********************")</span></span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", "****************************************")</span></span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.access.key"</span>, <span class="string">"********************"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.secret.key"</span>, <span class="string">"****************************************"</span>)</span><br></pre></td></tr></table></figure></p>
+<p>Or, set them in the <code>spark-env.sh</code>.  </p>
+<p>I haven’t made it work in the cluster mode, without mannually coping the jars to the cluster nodes.</p>
+<p><strong>Note:</strong>  </p>
+<ul>
+<li>There’re several ways AWS keys being captured by Spark, like spark-submit config, Spark/bash env, ~/.aws/credentials, etc. Just try it.</li>
+<li>If the input/output args to your Spark application are S3 paths, you might need to specify the paths with schema <strong><code>s3a://...</code></strong></li>
 </ul>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><a href="http://www.cnblogs.com/ziyunfei/p/4808530.html" target="_blank" rel="noopener">再谈 $* 和 $@ 在 Bash 中的表现</a></p>
 
       
     </div>
@@ -373,8 +386,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/28/dash_in_bash/" rel="next" title="Dash in Bash">
-                <i class="fa fa-chevron-left"></i> Dash in Bash
+              <a href="/2018/01/16/201801/enable_public_host_name_in_spark_webui/" rel="next" title="Enable Public Host Name in Spark Web UI">
+                <i class="fa fa-chevron-left"></i> Enable Public Host Name in Spark Web UI
               </a>
             
           </div>
@@ -383,8 +396,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/04/inside_map_reduce/" rel="prev" title="Inside MapReduce (Spill, Shuffle and Sort)">
-                Inside MapReduce (Spill, Shuffle and Sort) <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/19/201801/redirect_with_sudo/" rel="prev" title="Permission Denied when sudo with io redirect">
+                Permission Denied when sudo with io redirect <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -437,17 +450,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -500,22 +504,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#to-sum-up"><span class="nav-number">1.</span> <span class="nav-text">to sum up</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">2.</span> <span class="nav-text">reference</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

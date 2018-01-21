@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer t">
+<meta name="description" content="DO NOT have a dot in the file name beneath /etc/sudoers.d!!!It turns out that if you have a dot in the file name, like /etc/sudoers.d/fool.me, then this sudo setting does NOT work!Wasted a lot of time">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Enable Spark on AWS EC2 Accessing AWS S3">
-<meta property="og:url" content="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/index.html">
+<meta property="og:title" content="NO dot in &#x2F;etc&#x2F;sudoers.d&#x2F;filename!!!">
+<meta property="og:url" content="http://hiack.com/2017/12/27/201712/sudoers.d/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
-<meta property="og:description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer t">
+<meta property="og:description" content="DO NOT have a dot in the file name beneath /etc/sudoers.d!!!It turns out that if you have a dot in the file name, like /etc/sudoers.d/fool.me, then this sudo setting does NOT work!Wasted a lot of time">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-01-17T10:24:38.284Z">
+<meta property="og:updated_time" content="2017-12-27T15:04:18.986Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Enable Spark on AWS EC2 Accessing AWS S3">
-<meta name="twitter:description" content="I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.Regarding the SecurityException issue, refer t">
+<meta name="twitter:title" content="NO dot in &#x2F;etc&#x2F;sudoers.d&#x2F;filename!!!">
+<meta name="twitter:description" content="DO NOT have a dot in the file name beneath /etc/sudoers.d!!!It turns out that if you have a dot in the file name, like /etc/sudoers.d/fool.me, then this sudo setting does NOT work!Wasted a lot of time">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/"/>
+  <link rel="canonical" href="http://hiack.com/2017/12/27/201712/sudoers.d/"/>
 
 
 
 
 
-  <title>Enable Spark on AWS EC2 Accessing AWS S3 | CJ's SpaceX</title>
+  <title>NO dot in /etc/sudoers.d/filename!!! | CJ's SpaceX</title>
   
 
 
@@ -252,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/17/enable_spark_on_ec2_accessing_s3/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2017/12/27/201712/sudoers.d/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -269,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Enable Spark on AWS EC2 Accessing AWS S3</h1>
+          <h1 class="post-title" itemprop="name headline">NO dot in /etc/sudoers.d/filename!!!</h1>
         
 
         <div class="post-meta">
@@ -281,8 +281,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-17T18:24:38+08:00">
-                2018-01-17
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-27T23:04:18+08:00">
+                2017-12-27
               </time>
             
 
@@ -304,18 +304,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">Spark</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/devops/" itemprop="url" rel="index">
+                  <a href="/categories/devops/" itemprop="url" rel="index">
                     <span itemprop="name">DevOps</span>
                   </a>
                 </span>
@@ -352,16 +341,7 @@
       
 
       
-        <p>I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).<br>And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.<br>Regarding the <code>SecurityException</code> issue, refer to <a href="http://hiack.com/2018/01/15/spark_class_not_found/">ClassNotFoundException/SecurityException in Spark+sbt</a>.  </p>
-<p>To enable Spark accessing AWS S3, some config must be taken care of, including:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--deploy-mode client \</span><br><span class="line">--driver-memory 2400m \</span><br><span class="line">--executor-memory 2400m \</span><br><span class="line">--conf spark.executor.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.driver.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version=2 \</span><br><span class="line">--conf spark.speculation=<span class="literal">false</span> \</span><br><span class="line">--conf spark.hadoop.fs.s3a.region=cn-north-1 \</span><br><span class="line">--conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem \</span><br><span class="line">--conf spark.hadoop.fs.s3a.endpoint=s3.cn-north-1.amazonaws.com.cn \</span><br><span class="line">--conf spark.hadoop.fs.s3a.access.key=******************** \</span><br><span class="line">--conf spark.hadoop.fs.s3a.secret.key=**************************************** \</span><br></pre></td></tr></table></figure></p>
-<p>If you want to hard code them in the source code:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.endpoint"</span>, <span class="string">"s3.cn-north-1.amazonaws.com.cn"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.impl"</span>, <span class="string">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.region"</span>, <span class="string">"cn-north-1"</span>)</span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", "********************")</span></span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", "****************************************")</span></span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.access.key"</span>, <span class="string">"********************"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.secret.key"</span>, <span class="string">"****************************************"</span>)</span><br></pre></td></tr></table></figure></p>
-<p>Or, set them in the <code>spark-env.sh</code>.  </p>
-<p>I haven’t made it work in the cluster mode, without mannually coping the jars to the cluster nodes.</p>
-<p><strong>Note:</strong>  </p>
-<ul>
-<li>There’re several ways AWS keys being captured by Spark, like spark-submit config, Spark/bash env, ~/.aws/credentials, etc. Just try it.</li>
-<li>If the input/output args to your Spark application are S3 paths, you might need to specify the paths with schema <strong><code>s3a://...</code></strong></li>
-</ul>
+        <p><strong>DO NOT have a dot in the file name beneath /etc/sudoers.d!!!</strong><br>It turns out that if you have a dot in the file name, like <code>/etc/sudoers.d/fool.me</code>, then this sudo setting does <strong>NOT</strong> work!<br>Wasted a lot of time on it…</p>
 
       
     </div>
@@ -386,18 +366,14 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/16/enable_public_host_name_in_spark_webui/" rel="next" title="Enable Public Host Name in Spark Web UI">
-                <i class="fa fa-chevron-left"></i> Enable Public Host Name in Spark Web UI
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/19/redirect_with_sudo/" rel="prev" title="Permission Denied when sudo with io redirect">
-                Permission Denied when sudo with io redirect <i class="fa fa-chevron-right"></i>
+              <a href="/2017/12/28/201712/dash_in_bash/" rel="prev" title="Dash in Bash">
+                Dash in Bash <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
