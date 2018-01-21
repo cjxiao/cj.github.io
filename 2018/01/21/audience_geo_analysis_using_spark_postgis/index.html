@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="geo,lbs," />
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="CJ&#39;s SpaceX">
-<meta property="og:url" content="http://hiack.com/categories/devops/index.html">
+<meta name="description" content="BackgroundRecently I’m working on a project to analyze the GPS location carried in each AdReqeust, to gain some insights in the audience geographic characteristics. The input data is:    Ad Request lo">
+<meta name="keywords" content="geo,lbs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Audience Geo Analysis using Spark + PostGis">
+<meta property="og:url" content="http://hiack.com/2018/01/21/audience_geo_analysis_using_spark_postgis/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
+<meta property="og:description" content="BackgroundRecently I’m working on a project to analyze the GPS location carried in each AdReqeust, to gain some insights in the audience geographic characteristics. The input data is:    Ad Request lo">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-01-21T07:02:41.960Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CJ&#39;s SpaceX">
+<meta name="twitter:title" content="Audience Geo Analysis using Spark + PostGis">
+<meta name="twitter:description" content="BackgroundRecently I’m working on a project to analyze the GPS location carried in each AdReqeust, to gain some insights in the audience geographic characteristics. The input data is:    Ad Request lo">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/categories/devops/"/>
+  <link rel="canonical" href="http://hiack.com/2018/01/21/audience_geo_analysis_using_spark_postgis/"/>
 
 
 
 
 
-  <title>Category: DevOps | CJ's SpaceX</title>
+  <title>Audience Geo Analysis using Spark + PostGis | CJ's SpaceX</title>
   
 
 
@@ -140,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -234,55 +239,190 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>DevOps<small>Category</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/21/audience_geo_analysis_using_spark_postgis/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2017/12/27/201712/sudoers.d/" itemprop="url">
-              
-                <span itemprop="name">NO dot in /etc/sudoers.d/filename!!!</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Audience Geo Analysis using Spark + PostGis</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-27T23:04:18+08:00"
-              content="2017-12-27" >
-          12-27
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-21T15:02:41+08:00">
+                2018-01-21
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/postgis/" itemprop="url" rel="index">
+                    <span itemprop="name">PostGis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>Recently I’m working on a project to analyze the GPS location carried in each AdReqeust, to gain some insights in the <strong>audience geographic characteristics</strong>.</p>
+<p>The input data is:  </p>
+<ol>
+<li>Ad Request log, and each Ad Request contains (optionally): timestamp, device type/id, lat/lng, source app, etc.</li>
+<li>PostGis table dump of Residential Neighborhood (with polygons).</li>
+</ol>
+<p>The infrastructure and tools I’m using is AWS EC2/S3, Spark, PostgreSQL/PostGis.</p>
+<p>After a week of hard-working, I managed to build the system from the ground up, and produced the very first output from the pipeline.<br>Although I haven’t finished the project, as there’re a lot of traps occurred to me, and before I forget the pain, I want to put it down here.  </p>
+<p><em>To be continued…</em></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/geo/" rel="tag"># geo</a>
+          
+            <a href="/tags/lbs/" rel="tag"># lbs</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/19/201801/cut_csv_in_dos/" rel="next" title="Weird Result when Cut CSV Files in DOS Format">
+                <i class="fa fa-chevron-left"></i> Weird Result when Cut CSV Files in DOS Format
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -290,6 +430,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -310,8 +454,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -373,6 +526,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -506,6 +675,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
