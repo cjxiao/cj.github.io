@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="So we all know that in object-oriented programming, the use of overridable constructs like virtual functions or overridable variables (in Scala) in Constructor must be avoided, or at least be carefull">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-01-23T11:28:30.394Z">
+<meta property="og:updated_time" content="2018-01-23T11:28:52.190Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Use Overridable in Constructor in C++, Java and Scala">
 <meta name="twitter:description" content="So we all know that in object-oriented programming, the use of overridable constructs like virtual functions or overridable variables (in Scala) in Constructor must be avoided, or at least be carefull">
@@ -374,7 +374,7 @@
       
 
       
-        <p>So we all know that in object-oriented programming, the use of overridable constructs like virtual functions or overridable variables (in Scala) in <strong>Constructor</strong> must be avoided, or at least be carefully examined.<br>But if you insist to referencing the overridable in constructors,  there’s some subtile distinctions between C++ and Java (as well as Scala) you’d better know of.</p>
+        <p>So we all know that in object-oriented programming, the use of overridable constructs like virtual functions or overridable variables (in Scala) in <strong>Constructor</strong> must be avoided, or at least be carefully examined.<br>But if you insist to referencing the overridable in constructors,  there’re some subtile distinctions between C++ and Java (as well as Scala) you’d better know of.</p>
 <p>As mentioned by <code>Scala for the Impatient (2nd. Edition)</code> in <code>Chapter 8</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NOTE: At the root of the construction order problem lies a design decision of the Java language - namely, to allow the invocation of subclass methods in a superclass constructor.</span><br><span class="line">In C++, an object’s virtual function table pointer is set to the table of the superclass when the superclass constructor executes. Afterwards, the pointer is set to the subclass table. Therefore, in C++, it is not possible to modify constructor behavior through overriding.</span><br><span class="line">The Java designers felt that this subtlety was unnecessary, and the Java virtual machine does not adjust the virtual function table during construction.</span><br></pre></td></tr></table></figure></p>
 <p>To put it straight, if you call an overridable method in the base class constructor, which is overridden in the subclass, the resulting call goes to:  </p>
 <ul>
