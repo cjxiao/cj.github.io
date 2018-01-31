@@ -259,6 +259,200 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/31/201801/audience_geo_analysis_using_spark_postgis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/31/201801/audience_geo_analysis_using_spark_postgis/" itemprop="url">Audience Geo Analysis using Spark + PostGIS</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-31T15:52:23+08:00">
+                2018-01-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/postgis/" itemprop="url" rel="index">
+                    <span itemprop="name">PostGIS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>Recently I’m working on a project to analyze the DeviceID/GPS carried in each Ad Request, to gain some insights in the <strong>audience geographic characteristics</strong>.</p>
+<p>So, the <strong>Input Data</strong> is:</p>
+<ol>
+<li>Ad Request log on AWS S3, and each Ad Request contains (optionally): timestamp, device type/id, lat/lng, source app, etc.</li>
+<li>POI (Place of Interest) data in PostGIS (with polygon, or just a LatLng point), e.g., Residential Neighborhood data in Shanghai.</li>
+</ol>
+<p>The <strong>Result Output</strong> is:</p>
+<ul>
+<li>Count/frequency of users from specific source POIs/Brands/Categories visiting specific destination ones.</li>
+<li>maybe more…</li>
+</ul>
+<p>The <strong>platform and tools</strong> I’m using include:</p>
+<ul>
+<li><strong>AWS EC2 &amp; S3</strong></li>
+<li><strong>SparkSQL + Scala</strong></li>
+<li><strong>PostgreSQL + PostGIS extension</strong></li>
+</ul>
+<h1 id="Lessons-amp-Notes"><a href="#Lessons-amp-Notes" class="headerlink" title="Lessons &amp; Notes"></a>Lessons &amp; Notes</h1><p>After two weeks hard-working, I’m about to finish the project.<br>Just some lessons and notes I want to put down here:</p>
+<h2 id="AWS-S3"><a href="#AWS-S3" class="headerlink" title="AWS S3"></a>AWS S3</h2><p>It turns out to be a <a href="http://hiack.com/2018/01/27/201801/bad-idea-using-spark-with-s3-md/">Bad Idea Using SparkSQL with S3</a>.<br>And some configurations must be paid attention to, to <a href="http://hiack.com/2018/01/10/201801/enable_spark_on_ec2_accessing_s3/">Enable Spark on AWS EC2 Accessing AWS S3</a>.</p>
+<h2 id="SQL-amp-PostGIS"><a href="#SQL-amp-PostGIS" class="headerlink" title="SQL &amp; PostGIS"></a>SQL &amp; PostGIS</h2><h3 id="Plain-SQL"><a href="#Plain-SQL" class="headerlink" title="Plain SQL"></a>Plain SQL</h3><p>I choose to use PostGIS, as I need to perform some geo operations like <code>ST_DWithin, ST_Contains, ST_Distance</code>.</p>
+<p>There’s a <a href="https://github.com/tminglei/slick-pg" target="_blank" rel="noopener">Slick extensions for PostgreSQL</a> available, which supports PostGIS operators in Scala.<br>Still, I decided to use <code>Plain SQL</code>, as it’s</p>
+<ul>
+<li>More popular (on StackOverflow)</li>
+<li>Easier to learn, and deubgging (by PostgreSQL CLI)</li>
+</ul>
+<h3 id="DB-Connections-in-Spark-RDD"><a href="#DB-Connections-in-Spark-RDD" class="headerlink" title="DB Connections in Spark RDD"></a>DB Connections in Spark RDD</h3><p>As you may have known of,</p>
+<ul>
+<li>We <strong>must not</strong> create DB connections out of an RDD and use them inside.</li>
+<li>And we don’t want to setup DB connections for every record, which is <strong>inefficient</strong>.</li>
+</ul>
+<p>So, we’d better follow the <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html#design-patterns-for-using-foreachrdd" target="_blank" rel="noopener">Design Patterns for using foreachRDD</a>, just that I used <code>Dataset[T]::mapPartitions</code> instead.</p>
+<h3 id="Spark-Lazy-Evaluation"><a href="#Spark-Lazy-Evaluation" class="headerlink" title="Spark Lazy Evaluation"></a>Spark Lazy Evaluation</h3><p>If you follow the design patterns above, you may find your Spark application fails to run due to DB connection issue (like not connected, or invalid statement).<br>That’s why you need the <code>.toList</code> operations as shown below:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> res = partitionOfRecords.flatMap &#123; rec =&gt;</span><br><span class="line">    ???</span><br><span class="line">&#125;.toList <span class="comment">// toList: force eager computation</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="Alternative-to-PostGIS"><a href="#Alternative-to-PostGIS" class="headerlink" title="Alternative to PostGIS"></a>Alternative to PostGIS</h3><p>If you:</p>
+<ul>
+<li>Just need to calculate the geographic distance between 2 Poins (no polygon),</li>
+<li>And you can tolerate losing some precision (for the specific cases below, ~0.001%)</li>
+</ul>
+<p>Then, you can just pass PostGIS, as show below.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">poi=# SELECT ST_distance(ST_GeomFromText('POINT(121.337293282 31.1672401193)', 4326)::geography, ST_GeomFromText('POINT(121.366448159 31.2103586192)', 4326)::geography);</span><br><span class="line">  st_distance</span><br><span class="line"><span class="comment">---------------</span></span><br><span class="line"> 5529.65840066</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">poi=# SELECT ST_distance(ST_GeomFromText('POINT(121.337293282 31.1672401193)')::geography, ST_GeomFromText('POINT(121.337393282 31.1673401193)')::geography);</span><br><span class="line"> st_distance</span><br><span class="line"><span class="comment">-------------</span></span><br><span class="line"> 14.62253234</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; :paste</span><br><span class="line"><span class="comment">// Entering paste mode (ctrl-D to finish)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">calDistanceM</span></span>(lon1: <span class="type">Double</span>, lat1: <span class="type">Double</span>, lon2: <span class="type">Double</span>, lat2: <span class="type">Double</span>): <span class="type">Double</span> =&#123;</span><br><span class="line">    <span class="comment">//pi为π，r为地球半径</span></span><br><span class="line">    <span class="keyword">val</span> pi = <span class="number">3.1415926</span></span><br><span class="line">    <span class="keyword">val</span> r: <span class="type">Double</span>  = <span class="number">6370.99681</span></span><br><span class="line">    <span class="comment">//a1、a2、b1、b2分别为上面数据的经纬度转换为弧度</span></span><br><span class="line">    <span class="keyword">val</span> a1 = lat1 * pi /<span class="number">180.0</span></span><br><span class="line">    <span class="keyword">val</span> a2 = lon1 * pi /<span class="number">180.0</span></span><br><span class="line">    <span class="keyword">val</span> b1 = lat2 * pi /<span class="number">180.0</span></span><br><span class="line">    <span class="keyword">val</span> b2 = lon2 * pi /<span class="number">180.0</span></span><br><span class="line">    <span class="keyword">var</span> t1: <span class="type">Double</span> = <span class="type">Math</span>.cos(a1) * <span class="type">Math</span>.cos(a2) * <span class="type">Math</span>.cos(b1)* <span class="type">Math</span>.cos(b2)</span><br><span class="line">    <span class="keyword">var</span> t2: <span class="type">Double</span> = <span class="type">Math</span>.cos(a1) * <span class="type">Math</span>.sin(a2) * <span class="type">Math</span>.cos(b1)* <span class="type">Math</span>.sin(b2)</span><br><span class="line">    <span class="keyword">var</span> t3: <span class="type">Double</span> = <span class="type">Math</span>.sin(a1) * <span class="type">Math</span>.sin(b1)</span><br><span class="line">    <span class="keyword">val</span> distance = <span class="type">Math</span>.acos(t1 + t2 + t3) * r</span><br><span class="line">    distance * <span class="number">1000</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Exiting paste mode, now interpreting.</span></span><br><span class="line"></span><br><span class="line">calDistanceM: (lon1: <span class="type">Double</span>, lat1: <span class="type">Double</span>, lon2: <span class="type">Double</span>, lat2: <span class="type">Double</span>)<span class="type">Double</span></span><br><span class="line"></span><br><span class="line">scala&gt; calDistanceM(<span class="number">121.337293282</span>, <span class="number">31.1672401193</span>, <span class="number">121.366448159</span>, <span class="number">31.2103586192</span>)</span><br><span class="line">res0: <span class="type">Double</span> = <span class="number">5538.864157826987</span></span><br><span class="line"></span><br><span class="line">scala&gt; calDistanceM(<span class="number">121.337293282</span>, <span class="number">31.1672401193</span>, <span class="number">121.337393282</span>, <span class="number">31.1673401193</span>)</span><br><span class="line">res1: <span class="type">Double</span> = <span class="number">14.634816191814881</span></span><br></pre></td></tr></table></figure>
+<h3 id="Bottleneck"><a href="#Bottleneck" class="headerlink" title="Bottleneck"></a>Bottleneck</h3><p>I use <code>m3.medium</code> for Spark Master/Workers, and <code>m4.4xlarge</code> for PostGIS server, and the instance count ratio is <em>20:1</em>.<br>For my typical jobs, the CPU usage is ~50%, and seems the bottleneck is the networking, before I start the optimization of the pipeline.</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><em>from Spark official docs, Stackoverflow and other web resources…</em></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/27/201801/bad-idea-using-spark-with-s3-md/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -366,7 +560,7 @@
             <p>In my recent project <a href="http://hiack.com/2018/01/21/audience_geo_analysis_using_spark_postgis/">Audience Geo Analysis using Spark + PostGis</a>, I use <strong>AWS S3</strong> as the source &amp; destination data store.<br>Although, </p>
 <ul>
 <li>I’m aware that AWS S3 is <strong>an object store but not a true file system</strong>, and,</li>
-<li>I’ve heard that the AWS S3 <strong>consistency model</strong> may cause some problem to Spark (or other similar big data applications), and</li>
+<li>I’ve heard of that the AWS S3 <strong>consistency model</strong> may cause some problem to Spark (or other similar big data applications), and</li>
 <li>I configured my app specifically for this, as:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2</span><br><span class="line">spark.speculation false</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
@@ -374,15 +568,22 @@
 <p>The <strong>background</strong> is, I need to create 2 tables from large log data and perform a join operation on them.<br>In case any of them fails and I don’t want to waste time in re-running the full pipeline, I submitted 3 jobs separately in sequence: I put the 3 <code>spark-submit</code> in a shell script and ran it in background, and then I went to sleep.  </p>
 <p>The final <code>join</code> job looks like:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; df1.orderBy(<span class="string">"uid"</span>).show</span><br><span class="line"></span><br><span class="line">+----+----+---+</span><br><span class="line">| uid| hid| sv|</span><br><span class="line">+----+----+---+</span><br><span class="line">|uid1|hid2| <span class="number">10</span>|</span><br><span class="line">|uid1|hid1| <span class="number">10</span>|</span><br><span class="line">|uid1|hid3| <span class="number">10</span>|</span><br><span class="line">|uid2|hid1|  <span class="number">2</span>|</span><br><span class="line">|uid3|hid2| <span class="number">10</span>|</span><br><span class="line">|uid4|hid2|  <span class="number">3</span>|</span><br><span class="line">|uid5|hid3|  <span class="number">5</span>|</span><br><span class="line">+----+----+---+</span><br><span class="line"></span><br><span class="line">scala&gt; df2.orderBy(<span class="string">"uid"</span>).show</span><br><span class="line"></span><br><span class="line">+----+----+---+</span><br><span class="line">| uid| pid| sv|</span><br><span class="line">+----+----+---+</span><br><span class="line">|uid1|pid2|  <span class="number">2</span>|</span><br><span class="line">|uid1|pid1|  <span class="number">1</span>|</span><br><span class="line">|uid2|pid1|  <span class="number">2</span>|</span><br><span class="line">|uid3|pid1|  <span class="number">3</span>|</span><br><span class="line">|uid3|pidx|<span class="number">999</span>|</span><br><span class="line">|uid3|pid2|  <span class="number">4</span>|</span><br><span class="line">|uidx|pid1|  <span class="number">2</span>|</span><br><span class="line">+----+----+---+</span><br><span class="line"></span><br><span class="line">scala&gt; df1.drop(<span class="string">"sv"</span>)</span><br><span class="line">  .join(df2, <span class="string">"uid"</span>)</span><br><span class="line">  .groupBy(<span class="string">"hid"</span>, <span class="string">"pid"</span>)</span><br><span class="line">  .agg(count(<span class="string">"*"</span>) as <span class="string">"xcnt"</span>, sum(<span class="string">"sv"</span>) as <span class="string">"xsum"</span>, avg(<span class="string">"sv"</span>) as <span class="string">"xavg"</span>)</span><br><span class="line">  .orderBy(<span class="string">"hid"</span>).show</span><br><span class="line"></span><br><span class="line">+----+----+----+----+-----+</span><br><span class="line">| hid| pid|xcnt|xsum| xavg|</span><br><span class="line">+----+----+----+----+-----+</span><br><span class="line">|hid1|pid1|   <span class="number">2</span>|   <span class="number">3</span>|  <span class="number">1.5</span>|</span><br><span class="line">|hid1|pid2|   <span class="number">1</span>|   <span class="number">2</span>|  <span class="number">2.0</span>|</span><br><span class="line">|hid2|pid2|   <span class="number">2</span>|   <span class="number">6</span>|  <span class="number">3.0</span>|</span><br><span class="line">|hid2|pidx|   <span class="number">1</span>| <span class="number">999</span>|<span class="number">999.0</span>|</span><br><span class="line">|hid2|pid1|   <span class="number">2</span>|   <span class="number">4</span>|  <span class="number">2.0</span>|</span><br><span class="line">|hid3|pid1|   <span class="number">1</span>|   <span class="number">1</span>|  <span class="number">1.0</span>|</span><br><span class="line">|hid3|pid2|   <span class="number">1</span>|   <span class="number">2</span>|  <span class="number">2.0</span>|</span><br><span class="line">+----+----+----+----+-----+</span><br></pre></td></tr></table></figure></p>
 <p>When I checked the final result today, I was so surprised there were <strong>duplicate <code>(hid, pid)</code> rows</strong> in it.  </p>
-<p>At first, I thought I was mis-using the SparkSQL operators, and spent much time double checking. But when I tried to reproduce it in Spark-Shell. everything was just fine.   </p>
-<p>Finnaly, I realized, <strong><em>maybe</em></strong>, the root cause is AWS S3 consistenc model.<br>I’m not totally sure of it, but got no other choice.  </p>
+<p>At first, I thought I was mis-using the SparkSQL operators, and spent much time debugging it. But when I tried to reproduce it in Spark-Shell. everything was just fine.   </p>
+<p>Finnaly, I realized, <strong><em>probably</em></strong>, the root cause is AWS S3 consistency model.<br>I’m not totally sure of it, but got no other choice.  </p>
 <p>So, the workaround is,</p>
 <ul>
-<li>I put the 3 jobs in a single Spark app, or</li>
-<li>I run the down-stream dependent job (like the final join job) later for a while.</li>
+<li>Put the 3 jobs in a single Spark app, or</li>
+<li>Run the dependent down-stream job (like the final join job) later for a while.</li>
 </ul>
 <p>I haven’t verified them both, but at least the 2nd works for me.</p>
 <p>The lesson is, <strong>if you have another choice like HDFS, you’d better just pass AWS S3 as the intermediate big data storage</strong>.</p>
+<p><strong><em>[Update]</em></strong></p>
+<ul>
+<li>I’m almost sure it’s the AWS S3’s problem now.</li>
+<li>As last time when I copied the result data from S3 to local host, soon after the job was done, the downloaded data contained some records not supposed to be there.</li>
+<li>But when I re-downloaded the same bucket from S3, the data turned to be correct.</li>
+<li>So what else could it be?</li>
+</ul>
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
 <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/Introduction.html#ConsistencyModel" target="_blank" rel="noopener">Amazon S3 Data Consistency Model</a></li>
 <li><a href="https://medium.com/@subhojit20_27731/apache-spark-and-amazon-s3-gotchas-and-best-practices-a767242f3d98" target="_blank" rel="noopener">Apache Spark and Amazon S3 — Gotchas and best practices</a><br>-<a href="https://hortonworks.com/blog/s3guard-amazon-s3-consistency/" target="_blank" rel="noopener">USING S3GUARD FOR AMAZON S3 CONSISTENCY</a></li>
@@ -729,167 +930,6 @@
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cj</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Creature</span>  </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> range: <span class="type">Int</span> = <span class="number">10</span></span><br><span class="line">  <span class="keyword">val</span> env: <span class="type">Array</span>[<span class="type">Int</span>] = <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">Int</span>](range)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ant</span> <span class="keyword">extends</span> <span class="title">Creature</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">val</span> range = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Ant</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>() = <span class="keyword">new</span> <span class="type">Ant</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Main</span> <span class="keyword">extends</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> ant = <span class="type">Ant</span>()</span><br><span class="line">  <span class="type">System</span>.out.println(<span class="string">s"Ant.env.length = <span class="subst">$&#123;ant.env.length&#125;</span>"</span>)</span><br><span class="line">  <span class="type">System</span>.out.println(<span class="string">s"Ant.range = <span class="subst">$&#123;ant.range&#125;</span>"</span>)</span><br><span class="line">  <span class="comment">/* Output:</span></span><br><span class="line"><span class="comment">      Ant.env.length = 0</span></span><br><span class="line"><span class="comment">      Ant.range = 2</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/21/audience_geo_analysis_using_spark_postgis/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/21/audience_geo_analysis_using_spark_postgis/" itemprop="url">Audience Geo Analysis using Spark + PostGis</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-21T15:04:44+08:00">
-                2018-01-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">Spark</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/postgis/" itemprop="url" rel="index">
-                    <span itemprop="name">PostGis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>Recently I’m working on a project to analyze the GPS location carried in each AdReqeust, to gain some insights in the <strong>audience geographic characteristics</strong>.</p>
-<p>The input data is:</p>
-<ol>
-<li>Ad Request log, and each Ad Request contains (optionally): timestamp, device type/id, lat/lng, source app, etc.</li>
-<li>PostGis table dump of Residential Neighborhood (with polygons).</li>
-</ol>
-<p>The infrastructure and tools I’m using is <strong>AWS EC2/S3, Spark, PostgreSQL/PostGis</strong>.</p>
-<p>After a week’s hard-working, I managed to build the system from the ground up, and produced the very first output from the pipeline.<br>Although I haven’t finished the project, as there’re a lot of traps occurred to me, and before I forget the pain, I want to put it down here.  </p>
-<p><em>To be continued…</em></p>
 
           
         
@@ -1981,7 +2021,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

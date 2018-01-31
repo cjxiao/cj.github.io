@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="In my recent project Audience Geo Analysis using Spark + PostGis, I use AWS S3 as the source &amp;amp; destination data store.Although,   I’m aware that AWS S3 is an object store but not a true file syste">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-01-27T16:03:54.604Z">
+<meta property="og:updated_time" content="2018-01-31T08:37:25.527Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Bad Idea Using SparkSQL with S3">
 <meta name="twitter:description" content="In my recent project Audience Geo Analysis using Spark + PostGis, I use AWS S3 as the source &amp;amp; destination data store.Although,   I’m aware that AWS S3 is an object store but not a true file syste">
@@ -366,7 +366,7 @@
         <p>In my recent project <a href="http://hiack.com/2018/01/21/audience_geo_analysis_using_spark_postgis/">Audience Geo Analysis using Spark + PostGis</a>, I use <strong>AWS S3</strong> as the source &amp; destination data store.<br>Although, </p>
 <ul>
 <li>I’m aware that AWS S3 is <strong>an object store but not a true file system</strong>, and,</li>
-<li>I’ve heard that the AWS S3 <strong>consistency model</strong> may cause some problem to Spark (or other similar big data applications), and</li>
+<li>I’ve heard of that the AWS S3 <strong>consistency model</strong> may cause some problem to Spark (or other similar big data applications), and</li>
 <li>I configured my app specifically for this, as:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2</span><br><span class="line">spark.speculation false</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
@@ -374,15 +374,22 @@
 <p>The <strong>background</strong> is, I need to create 2 tables from large log data and perform a join operation on them.<br>In case any of them fails and I don’t want to waste time in re-running the full pipeline, I submitted 3 jobs separately in sequence: I put the 3 <code>spark-submit</code> in a shell script and ran it in background, and then I went to sleep.  </p>
 <p>The final <code>join</code> job looks like:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; df1.orderBy(<span class="string">"uid"</span>).show</span><br><span class="line"></span><br><span class="line">+----+----+---+</span><br><span class="line">| uid| hid| sv|</span><br><span class="line">+----+----+---+</span><br><span class="line">|uid1|hid2| <span class="number">10</span>|</span><br><span class="line">|uid1|hid1| <span class="number">10</span>|</span><br><span class="line">|uid1|hid3| <span class="number">10</span>|</span><br><span class="line">|uid2|hid1|  <span class="number">2</span>|</span><br><span class="line">|uid3|hid2| <span class="number">10</span>|</span><br><span class="line">|uid4|hid2|  <span class="number">3</span>|</span><br><span class="line">|uid5|hid3|  <span class="number">5</span>|</span><br><span class="line">+----+----+---+</span><br><span class="line"></span><br><span class="line">scala&gt; df2.orderBy(<span class="string">"uid"</span>).show</span><br><span class="line"></span><br><span class="line">+----+----+---+</span><br><span class="line">| uid| pid| sv|</span><br><span class="line">+----+----+---+</span><br><span class="line">|uid1|pid2|  <span class="number">2</span>|</span><br><span class="line">|uid1|pid1|  <span class="number">1</span>|</span><br><span class="line">|uid2|pid1|  <span class="number">2</span>|</span><br><span class="line">|uid3|pid1|  <span class="number">3</span>|</span><br><span class="line">|uid3|pidx|<span class="number">999</span>|</span><br><span class="line">|uid3|pid2|  <span class="number">4</span>|</span><br><span class="line">|uidx|pid1|  <span class="number">2</span>|</span><br><span class="line">+----+----+---+</span><br><span class="line"></span><br><span class="line">scala&gt; df1.drop(<span class="string">"sv"</span>)</span><br><span class="line">  .join(df2, <span class="string">"uid"</span>)</span><br><span class="line">  .groupBy(<span class="string">"hid"</span>, <span class="string">"pid"</span>)</span><br><span class="line">  .agg(count(<span class="string">"*"</span>) as <span class="string">"xcnt"</span>, sum(<span class="string">"sv"</span>) as <span class="string">"xsum"</span>, avg(<span class="string">"sv"</span>) as <span class="string">"xavg"</span>)</span><br><span class="line">  .orderBy(<span class="string">"hid"</span>).show</span><br><span class="line"></span><br><span class="line">+----+----+----+----+-----+</span><br><span class="line">| hid| pid|xcnt|xsum| xavg|</span><br><span class="line">+----+----+----+----+-----+</span><br><span class="line">|hid1|pid1|   <span class="number">2</span>|   <span class="number">3</span>|  <span class="number">1.5</span>|</span><br><span class="line">|hid1|pid2|   <span class="number">1</span>|   <span class="number">2</span>|  <span class="number">2.0</span>|</span><br><span class="line">|hid2|pid2|   <span class="number">2</span>|   <span class="number">6</span>|  <span class="number">3.0</span>|</span><br><span class="line">|hid2|pidx|   <span class="number">1</span>| <span class="number">999</span>|<span class="number">999.0</span>|</span><br><span class="line">|hid2|pid1|   <span class="number">2</span>|   <span class="number">4</span>|  <span class="number">2.0</span>|</span><br><span class="line">|hid3|pid1|   <span class="number">1</span>|   <span class="number">1</span>|  <span class="number">1.0</span>|</span><br><span class="line">|hid3|pid2|   <span class="number">1</span>|   <span class="number">2</span>|  <span class="number">2.0</span>|</span><br><span class="line">+----+----+----+----+-----+</span><br></pre></td></tr></table></figure></p>
 <p>When I checked the final result today, I was so surprised there were <strong>duplicate <code>(hid, pid)</code> rows</strong> in it.  </p>
-<p>At first, I thought I was mis-using the SparkSQL operators, and spent much time double checking. But when I tried to reproduce it in Spark-Shell. everything was just fine.   </p>
-<p>Finnaly, I realized, <strong><em>maybe</em></strong>, the root cause is AWS S3 consistenc model.<br>I’m not totally sure of it, but got no other choice.  </p>
+<p>At first, I thought I was mis-using the SparkSQL operators, and spent much time debugging it. But when I tried to reproduce it in Spark-Shell. everything was just fine.   </p>
+<p>Finnaly, I realized, <strong><em>probably</em></strong>, the root cause is AWS S3 consistency model.<br>I’m not totally sure of it, but got no other choice.  </p>
 <p>So, the workaround is,</p>
 <ul>
-<li>I put the 3 jobs in a single Spark app, or</li>
-<li>I run the down-stream dependent job (like the final join job) later for a while.</li>
+<li>Put the 3 jobs in a single Spark app, or</li>
+<li>Run the dependent down-stream job (like the final join job) later for a while.</li>
 </ul>
 <p>I haven’t verified them both, but at least the 2nd works for me.</p>
 <p>The lesson is, <strong>if you have another choice like HDFS, you’d better just pass AWS S3 as the intermediate big data storage</strong>.</p>
+<p><strong><em>[Update]</em></strong></p>
+<ul>
+<li>I’m almost sure it’s the AWS S3’s problem now.</li>
+<li>As last time when I copied the result data from S3 to local host, soon after the job was done, the downloaded data contained some records not supposed to be there.</li>
+<li>But when I re-downloaded the same bucket from S3, the data turned to be correct.</li>
+<li>So what else could it be?</li>
+</ul>
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
 <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/Introduction.html#ConsistencyModel" target="_blank" rel="noopener">Amazon S3 Data Consistency Model</a></li>
 <li><a href="https://medium.com/@subhojit20_27731/apache-spark-and-amazon-s3-gotchas-and-best-practices-a767242f3d98" target="_blank" rel="noopener">Apache Spark and Amazon S3 — Gotchas and best practices</a><br>-<a href="https://hortonworks.com/blog/s3guard-amazon-s3-consistency/" target="_blank" rel="noopener">USING S3GUARD FOR AMAZON S3 CONSISTENCY</a></li>
@@ -428,6 +435,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/31/201801/audience_geo_analysis_using_spark_postgis/" rel="prev" title="Audience Geo Analysis using Spark + PostGIS">
+                Audience Geo Analysis using Spark + PostGIS <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -526,7 +537,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
