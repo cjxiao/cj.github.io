@@ -259,7 +259,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/31/201801/audience_geo_analysis_using_spark_postgis/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/16/2018/02/kafka-design-implementation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -278,7 +278,421 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/31/201801/audience_geo_analysis_using_spark_postgis/" itemprop="url">Audience Geo Analysis using Spark + PostGIS</a></h1>
+                <a class="post-title-link" href="/2018/02/16/2018/02/kafka-design-implementation/" itemprop="url">Kafka Design & Implementation</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-16T17:55:27+08:00">
+                2018-02-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="4-Design"><a href="#4-Design" class="headerlink" title="4. Design"></a>4. Design</h1><h2 id="4-1-Motivation"><a href="#4-1-Motivation" class="headerlink" title="4.1 Motivation"></a>4.1 Motivation</h2><p>To Support:</p>
+<ul>
+<li>High throughput</li>
+<li>Large data backlogs</li>
+<li>Low latency</li>
+<li>Partitioned, distributed, real-time processing</li>
+<li>Fault tolerance</li>
+</ul>
+<h2 id="4-2-Persistence"><a href="#4-2-Persistence" class="headerlink" title="4.2 Persistence"></a>4.2 Persistence</h2><h3 id="Dont’-fear-the-filesystem"><a href="#Dont’-fear-the-filesystem" class="headerlink" title="Dont’ fear the filesystem"></a>Dont’ fear the filesystem</h3><ul>
+<li>Kafka relies heavily on the filesystem for storing and <strong>caching</strong> messages.</li>
+<li><p>Disks are both much slower and much faster than people expect depending on how they are used.</p>
+</li>
+<li><p>Using the filesystem and relying on pagecache is superior to maintaining an in-memory cache or other structure:</p>
+<ul>
+<li>automatic access to all free memory</li>
+<li>compact byte structure</li>
+<li>without GC penalties</li>
+<li>this cache will stay warm even if the service is restarted</li>
+</ul>
+</li>
+<li><p>All data is immediately written to a persistent log on the filesystem without necessarily flushing to disk.</p>
+</li>
+</ul>
+<h3 id="Constant-Time-Suffices"><a href="#Constant-Time-Suffices" class="headerlink" title="Constant Time Suffices"></a>Constant Time Suffices</h3><ul>
+<li>Btree operations are O(log N), still slow for disk operations</li>
+<li>Simple reads and appends to files as is commonly the case with logging solutions:<ul>
+<li>O(1)</li>
+<li>reads do not block writes or each other</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-3-Efficiency"><a href="#4-3-Efficiency" class="headerlink" title="4.3 Efficiency"></a>4.3 Efficiency</h2><p>(combination of pagecache and sendfile)  </p>
+<ul>
+<li>Disk IO</li>
+<li>Too many small I/O operations<ul>
+<li>Message set abstraction (Batching)</li>
+</ul>
+</li>
+<li>Excessive byte copying<ul>
+<li>Standardized binary message format that is shared by the producer, the broker, and the consumer</li>
+<li>Message log on the disk in the same format used by the producer and consumer</li>
+<li>Enable efficient network transfer of persistent log chunks (<code>sendfile</code>, zero-copy): send the data from pagecache to the network directly</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-to-end-Batch-Compression"><a href="#End-to-end-Batch-Compression" class="headerlink" title="End-to-end Batch Compression"></a>End-to-end Batch Compression</h3><p>(compression on batch of messages)</p>
+<ul>
+<li>This batch of messages will be written in compressed form and will remain compressed in the log and will only be decompressed by the consumer.</li>
+</ul>
+<h2 id="4-4-The-Producer"><a href="#4-4-The-Producer" class="headerlink" title="4.4 The Producer"></a>4.4 The Producer</h2><h3 id="Load-Balancing"><a href="#Load-Balancing" class="headerlink" title="Load Balancing"></a>Load Balancing</h3><ul>
+<li>The producer sends data directly to the broker that is the leader for the partition without any intervening routing tier. </li>
+<li>To help the producer do this all Kafka nodes can answer a request for metadata about which servers are alive and where the leaders for the partitions of a topic are at any given time.</li>
+<li>The client controls which partition it publishes messages to.</li>
+</ul>
+<h3 id="Asynchronous-send"><a href="#Asynchronous-send" class="headerlink" title="Asynchronous send"></a>Asynchronous send</h3><ul>
+<li>Batching and asynchronous sending of messages</li>
+<li>Configurable to trade off a small amount of additional latency for better throughput</li>
+</ul>
+<h2 id="4-5-The-Consumer"><a href="#4-5-The-Consumer" class="headerlink" title="4.5 The Consumer"></a>4.5 The Consumer</h2><ul>
+<li><em>Fetch</em> from partition leaders</li>
+<li>Specify the <code>offset</code> in the log, and receives back a chunk of log beginning from that position</li>
+</ul>
+<h3 id="Push-vs-Pull"><a href="#Push-vs-Pull" class="headerlink" title="Push vs. Pull"></a>Push vs. Pull</h3><p><strong>Data is pushed to the broker from the producer and pulled from the broker by the consumer.</strong></p>
+<ul>
+<li>Support diverse comsuming rate</li>
+<li>Lend itself to aggressive batching of data sent to the consumer<ul>
+<li>Get optimal batching without introducing unnecessary latency</li>
+</ul>
+</li>
+</ul>
+<p>The deficiency of a naive pull-based system: busy-waiting for data to arrive.</p>
+<ul>
+<li>To avoid this we have parameters in our pull request that allow the consumer request to block in a “long poll” waiting until data arrives</li>
+</ul>
+<h3 id="Consumer-Position"><a href="#Consumer-Position" class="headerlink" title="Consumer Position"></a>Consumer Position</h3><p>The position of a consumer in each partition is just a single integer, the offset of the next message to consume.</p>
+<h3 id="Offline-Data-Load"><a href="#Offline-Data-Load" class="headerlink" title="Offline Data Load"></a>Offline Data Load</h3><h2 id="4-6-Message-Delivery-Semantics"><a href="#4-6-Message-Delivery-Semantics" class="headerlink" title="4.6 Message Delivery Semantics"></a>4.6 Message Delivery Semantics</h2><ul>
+<li>If a producer attempts to publish a message and experiences a network error it cannot be sure if this error happened before or after the message was committed.</li>
+<li>Since 0.11.0.0, the Kafka producer also supports an idempotent delivery option (<em>enable.idempotence</em>) which guarantees that resending will not result in duplicate entries in the log.<ul>
+<li>To achieve this, the broker assigns each producer an ID and deduplicates messages using a sequence number that is sent by the producer along with every message.</li>
+</ul>
+</li>
+<li>Also beginning with 0.11.0.0, the producer supports the ability to send messages to multiple topic partitions using transaction-like semantics: i.e. either all messages are successfully written or none of them are. <ul>
+<li>Exactly-once processing between Kafka topics</li>
+</ul>
+</li>
+<li>Allow the producer to specify the durability level: Committed, Completely Asynchronous, or only the Leader has it.</li>
+<li>When consuming from a Kafka topic and producing to another topic (as in a Kafka Streams application), we can leverage the new <strong>transactional producer</strong> capabilities in 0.11.0.0.<ul>
+<li>The consumer’s position is stored as a message in a topic.</li>
+<li>Visiblility to other consumers depends on their <strong>isolation level</strong>, like read_uncommitted, read_committed.</li>
+</ul>
+</li>
+</ul>
+<p>-<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">So effectively Kafka supports exactly-once delivery in Kafka Streams, and the transactional producer/consumer can be used generally to provide exactly-once delivery when transfering and processing data between Kafka topics. Exactly-once delivery for other destination systems generally requires cooperation with such systems, but Kafka provides the offset which makes implementing this feasible (see also Kafka Connect). Otherwise, Kafka guarantees at-least-once delivery by default, and allows the user to implement at-most-once delivery by disabling retries on the producer and committing offsets in the consumer prior to processing a batch of messages.</span><br></pre></td></tr></table></figure></p>
+<h2 id="4-7-Replication"><a href="#4-7-Replication" class="headerlink" title="4.7 Replication"></a>4.7 Replication</h2><ul>
+<li>All reads and writes go to the leader of the partition.</li>
+<li>Having the followers pull from the leader has the nice property of allowing the follower to naturally batch together log entries they are applying to their log.</li>
+</ul>
+<p>For Kafka node liveness (<em>in-sync</em>) has two conditions</p>
+<ol>
+<li>A node must be able to maintain its session with ZooKeeper (via ZooKeeper’s heartbeat mechanism)</li>
+<li>If it is a slave it must replicate the writes happening on the leader and not fall “too far” behind</li>
+</ol>
+<ul>
+<li>A message is considered <strong>committed</strong> when all in sync replicas (ISR) for that partition have applied it to their log</li>
+<li>Only committed messages are ever given out to the consumer.<ul>
+<li>The message can be committed, and consumed, even if the number of in-sync replicas is lower than the minimum (e.g. it can be as low as just the leader).</li>
+</ul>
+</li>
+<li>Kafka will remain available in the presence of node failures after a short fail-over period, but may not remain available in the presence of network partitions. </li>
+</ul>
+<h3 id="Replicated-Logs-Quorums-ISRs-and-State-Machines-Oh-my"><a href="#Replicated-Logs-Quorums-ISRs-and-State-Machines-Oh-my" class="headerlink" title="Replicated Logs: Quorums, ISRs, and State Machines (Oh my!)"></a>Replicated Logs: Quorums, ISRs, and State Machines (Oh my!)</h3><ul>
+<li>At its heart a Kafka partition is a replicated log.</li>
+<li>Choose an up-to-date follower as the new leader</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Kafka takes a slightly different approach to choosing its quorum set. Instead of majority vote, Kafka dynamically maintains a set of in-sync replicas (ISR) that are caught-up to the leader. Only members of this set are eligible for election as leader. A write to a Kafka partition is not considered committed until all in-sync replicas (conf: min.insync.replicas) have received the write. This ISR set is persisted to ZooKeeper whenever it changes. Because of this, any replica in the ISR is eligible to be elected leader. This is an important factor for Kafka&apos;s usage model where there are many partitions and ensuring leadership balance is important. With this ISR model and f+1 replicas, a Kafka topic can tolerate f failures without losing committed messages.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Kafka does not require that crashed nodes recover with all their data intact.</p>
+</li>
+</ul>
+<h3 id="Unclean-leader-election-What-if-they-all-die"><a href="#Unclean-leader-election-What-if-they-all-die" class="headerlink" title="Unclean leader election: What if they all die?"></a>Unclean leader election: What if they all die?</h3><ul>
+<li>By default, Kafka chooses the second strategy and favor choosing a potentially inconsistent replica when all replicas in the ISR are dead (conf: unclean.leader.election.enable).</li>
+</ul>
+<h3 id="Availability-and-Durability-Guarantees"><a href="#Availability-and-Durability-Guarantees" class="headerlink" title="Availability and Durability Guarantees"></a>Availability and Durability Guarantees</h3><ul>
+<li>Producers can choose whether they wait for the message to be acknowledged by 0,1 or all (-1) replicas.<ul>
+<li><em>all</em>: all ISRs</li>
+</ul>
+</li>
+</ul>
+<h3 id="Replica-Management"><a href="#Replica-Management" class="headerlink" title="Replica Management"></a>Replica Management</h3><ul>
+<li>Balance partitions within a cluster in a round-robin fashion to avoid clustering all partitions for high-volume topics on a small number of nodes</li>
+<li>Balance leadership so that each node is the leader for a proportional share of its partitions</li>
+<li>Leadership election:<ul>
+<li>A <strong>naive</strong> implementation of leader election would end up running an election per partition for all partitions a node hosted when that node failed.</li>
+<li>Instead, we elect one of the brokers as the <strong>“controller”</strong>. This controller detects failures at the broker level and is responsible for changing the leader of all affected partitions in a failed broker.</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-8-Log-Compaction"><a href="#4-8-Log-Compaction" class="headerlink" title="4.8 Log Compaction"></a>4.8 Log Compaction</h2><p>Log compaction ensures that Kafka will always retain at least the last known value for each message key within the log of data for a single topic partition.</p>
+<ul>
+<li>For class of data streams are the log of changes to keyed, mutable data (for example, the changes to a database table)</li>
+<li>Log compaction is a mechanism to give finer-grained <strong>per-record</strong> retention, rather than the coarser-grained time-based retention.</li>
+</ul>
+<h3 id="Log-Compaction-Basics"><a href="#Log-Compaction-Basics" class="headerlink" title="Log Compaction Basics"></a>Log Compaction Basics</h3><p><img src="/content/images/2018/02/kafka-design-implementation_log_compaction_basics_1.png" alt="logical structure of a Kafka log"></p>
+<ul>
+<li>All offsets remain valid positions in the log, even if the message with that offset has been compacted away.<ul>
+<li>In this case this position is indistinguishable from the next highest offset that does appear in the log.</li>
+<li>For example, in the picture above the offsets 36, 37, and 38 are all equivalent positions and a read beginning at any of these offsets would return a message set beginning with 38.</li>
+</ul>
+</li>
+<li>A message with a key and a null payload will be treated as a delete from the log (delete marker).<ul>
+<li>Will be cleaned out of the log after a period of time to free up space (delete retention point)</li>
+</ul>
+</li>
+<li>The compaction is done in the background by periodically recopying log segments.<ul>
+<li>Cleaning does not block reads and can be throttled.</li>
+</ul>
+</li>
+</ul>
+<h3 id="What-guarantees-does-log-compaction-provide"><a href="#What-guarantees-does-log-compaction-provide" class="headerlink" title="What guarantees does log compaction provide?"></a>What guarantees does log compaction provide?</h3><h3 id="Log-Compaction-Details"><a href="#Log-Compaction-Details" class="headerlink" title="Log Compaction Details"></a>Log Compaction Details</h3><p>Log compaction is handled by the log cleaner, a pool of background threads that recopy log segment files, removing records whose key appears in the head of the log.</p>
+<ol>
+<li>It chooses the log that has the <strong>highest ratio of log head to log tail</strong>.</li>
+<li>It creates a succinct summary of the last offset for each key in the head of the log.</li>
+<li>It recopies the log <strong>from beginning to end</strong> removing keys which have a later occurrence in the log. New, clean segments are swapped into the log immediately so the additional disk space required is just one additional log segment (not a fully copy of the log).</li>
+<li>The summary of the log head is essentially just a space-compact hash table.</li>
+</ol>
+<h3 id="Configuring-The-Log-Cleaner"><a href="#Configuring-The-Log-Cleaner" class="headerlink" title="Configuring The Log Cleaner"></a>Configuring The Log Cleaner</h3><p>The <strong>active segment</strong> will not be compacted.</p>
+<h2 id="4-9-Quotas"><a href="#4-9-Quotas" class="headerlink" title="4.9 Quotas"></a>4.9 Quotas</h2><p>control the broker resources used by each group of clients:</p>
+<ul>
+<li>Network bandwidth quotas</li>
+<li>Request rate quotas</li>
+</ul>
+<h1 id="5-IMPLEMENTATION"><a href="#5-IMPLEMENTATION" class="headerlink" title="5. IMPLEMENTATION"></a>5. IMPLEMENTATION</h1><h2 id="5-1-Network-Layer"><a href="#5-1-Network-Layer" class="headerlink" title="5.1 Network Layer"></a>5.1 Network Layer</h2><ul>
+<li>NIO server</li>
+<li>sendfile: transferTo</li>
+<li>The threading model is a single acceptor thread and N processor threads which handle a fixed number of connections each.</li>
+</ul>
+<h2 id="5-2-Messages"><a href="#5-2-Messages" class="headerlink" title="5.2 Messages"></a>5.2 Messages</h2><ul>
+<li>Messages consist of a variable-length header, a variable length opaque key byte array and a variable length opaque value byte array.</li>
+</ul>
+<h2 id="5-3-Message-Format"><a href="#5-3-Message-Format" class="headerlink" title="5.3 Message Format"></a>5.3 Message Format</h2><ul>
+<li>Messages (aka Records) are always written in batches.</li>
+<li>Record batches and records have their own headers.</li>
+</ul>
+<h3 id="5-3-1-Record-Batch"><a href="#5-3-1-Record-Batch" class="headerlink" title="5.3.1 Record Batch"></a>5.3.1 Record Batch</h3><p>The following is the on-disk format of a RecordBatch.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">baseOffset: int64</span><br><span class="line">batchLength: int32</span><br><span class="line">partitionLeaderEpoch: int32</span><br><span class="line">magic: int8 (current magic value is 2)</span><br><span class="line">crc: int32</span><br><span class="line">attributes: int16</span><br><span class="line">    bit 0~2:</span><br><span class="line">        0: no compression</span><br><span class="line">        1: gzip</span><br><span class="line">        2: snappy</span><br><span class="line">        3: lz4</span><br><span class="line">    bit 3: timestampType</span><br><span class="line">    bit 4: isTransactional (0 means not transactional)</span><br><span class="line">    bit 5: isControlBatch (0 means not a control batch)</span><br><span class="line">    bit 6~15: unused</span><br><span class="line">lastOffsetDelta: int32</span><br><span class="line">firstTimestamp: int64</span><br><span class="line">maxTimestamp: int64</span><br><span class="line">producerId: int64</span><br><span class="line">producerEpoch: int16</span><br><span class="line">baseSequence: int32</span><br><span class="line">records: [Record]</span><br></pre></td></tr></table></figure></p>
+<h4 id="5-3-1-1-Control-Batches"><a href="#5-3-1-1-Control-Batches" class="headerlink" title="5.3.1.1 Control Batches"></a>5.3.1.1 Control Batches</h4><ul>
+<li>A control batch contains a single record called the control record.</li>
+<li>Control records should not be passed on to applications.</li>
+<li>Instead, they are used by consumers to filter out <strong>aborted transactional messages</strong>.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">version: int16 (current version is 0)</span><br><span class="line">type: int16 (0 indicates an abort marker, 1 indicates a commit)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="5-3-2-Record"><a href="#5-3-2-Record" class="headerlink" title="5.3.2 Record"></a>5.3.2 Record</h3><p>The on-disk format of a record with Headers is delineated below.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">length: varint</span><br><span class="line">attributes: int8</span><br><span class="line">    bit 0~7: unused</span><br><span class="line">timestampDelta: varint</span><br><span class="line">offsetDelta: varint</span><br><span class="line">keyLength: varint</span><br><span class="line">key: byte[]</span><br><span class="line">valueLen: varint</span><br><span class="line">value: byte[]</span><br><span class="line">Headers =&gt; [Header]</span><br></pre></td></tr></table></figure></p>
+<h4 id="5-4-2-1-Record-Header"><a href="#5-4-2-1-Record-Header" class="headerlink" title="5.4.2.1 Record Header"></a>5.4.2.1 Record Header</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">headerKeyLength: varint</span><br><span class="line">headerKey: String</span><br><span class="line">headerValueLength: varint</span><br><span class="line">Value: byte[]</span><br></pre></td></tr></table></figure>
+<h2 id="5-4-Log"><a href="#5-4-Log" class="headerlink" title="5.4 Log"></a>5.4 Log</h2><ul>
+<li>A log for a topic named “my_topic” with two partitions consists of two directories (namely my_topic_0 and my_topic_1) populated with data files containing the messages for that topic.</li>
+<li>Each message is uniquely identified by a 64-bit integer offset giving the byte position of the start of this message in the stream of all messages ever sent to <strong>that topic on that partition</strong> (note: the scope of offset is per partition, and <code>giving the byte position of the start of this message</code> is not quite correct, as it’s the sequential id).</li>
+<li>Each log file is named with the offset of the first message it contains.</li>
+</ul>
+<p><em>Note: The doc is out-of-date to the latest implementation.</em></p>
+<h3 id="Writes"><a href="#Writes" class="headerlink" title="Writes"></a>Writes</h3><h3 id="Reads"><a href="#Reads" class="headerlink" title="Reads"></a>Reads</h3><h3 id="Deletes"><a href="#Deletes" class="headerlink" title="Deletes"></a>Deletes</h3><p>To avoid locking reads while still allowing deletes that modify the segment list we use a copy-on-write style segment list implementation that provides consistent views to allow a binary search to proceed on an immutable static snapshot view of the log segments while deletes are progressing.</p>
+<h3 id="Guarantees"><a href="#Guarantees" class="headerlink" title="Guarantees"></a>Guarantees</h3><ul>
+<li>On startup a log recovery process is run that iterates over all messages in the newest log segment and verifies that each message entry is valid.<ul>
+<li>A message entry is valid if the sum of its size and offset are less than the length of the file AND the CRC32 of the message payload matches the CRC stored with the message.</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-5-Distribution"><a href="#5-5-Distribution" class="headerlink" title="5.5 Distribution"></a>5.5 Distribution</h2><h3 id="Consumer-Offset-Tracking"><a href="#Consumer-Offset-Tracking" class="headerlink" title="Consumer Offset Tracking"></a>Consumer Offset Tracking</h3><p>The high-level consumer tracks the maximum offset it has consumed in each partition and periodically commits its offset vector so that it can resume from those offsets in the event of a restart.</p>
+<ul>
+<li>Kafka provides the option to store all the offsets for a given consumer group in a designated broker (for that group) called the offset manager. i.e., any consumer instance in that consumer group should send its offset commits and fetches to that offset manager (broker).<ul>
+<li>The high-level consumer handles this automatically.</li>
+<li>If you use the simple consumer you will need to manage offsets manually.</li>
+<li>[Scala] A consumer can look up its offset manager by issuing a GroupCoordinatorRequest to any Kafka broker and reading the GroupCoordinatorResponse which will contain the offset manager.</li>
+<li>When the offset manager receives an OffsetCommitRequest, it appends the request to a special compacted Kafka topic named <strong>__consumer_offsets</strong>.</li>
+<li>Record Format: [Group, Topic, Partition]::[OffsetMetadata[Offset, Metadata], CommitTime, ExpirationTime]</li>
+<li>The offset manager also caches the offsets in an in-memory table in order to serve offset fetches quickly.</li>
+</ul>
+</li>
+</ul>
+<h4 id="Migrating-offsets-from-ZooKeeper-to-Kafka"><a href="#Migrating-offsets-from-ZooKeeper-to-Kafka" class="headerlink" title="Migrating offsets from ZooKeeper to Kafka"></a>Migrating offsets from ZooKeeper to Kafka</h4><h3 id="ZooKeeper-Directories"><a href="#ZooKeeper-Directories" class="headerlink" title="ZooKeeper Directories"></a>ZooKeeper Directories</h3><p>The following gives the ZooKeeper structures and algorithms used for co-ordination between consumers and brokers.</p>
+<h4 id="Notation"><a href="#Notation" class="headerlink" title="Notation"></a>Notation</h4><h4 id="Broker-Node-Registry"><a href="#Broker-Node-Registry" class="headerlink" title="Broker Node Registry"></a>Broker Node Registry</h4><p><code>/brokers/ids/[0...N] --&gt; {&quot;jmx_port&quot;:...,&quot;timestamp&quot;:...,&quot;endpoints&quot;:[...],&quot;host&quot;:...,&quot;version&quot;:...,&quot;port&quot;:...} (ephemeral node)</code></p>
+<ul>
+<li>On startup, a broker node registers itself by creating a znode with the logical broker id under /brokers/ids.</li>
+</ul>
+<h4 id="Broker-Topic-Registry"><a href="#Broker-Topic-Registry" class="headerlink" title="Broker Topic Registry"></a>Broker Topic Registry</h4><p><code>/brokers/topics/[topic]/partitions/[0...N]/state --&gt; {&quot;controller_epoch&quot;:...,&quot;leader&quot;:...,&quot;version&quot;:...,&quot;leader_epoch&quot;:...,&quot;isr&quot;:[...]} (ephemeral node)</code></p>
+<ul>
+<li>Each broker registers itself under the topics it maintains and stores the number of partitions for that topic.</li>
+</ul>
+<h4 id="Consumers-and-Consumer-Groups"><a href="#Consumers-and-Consumer-Groups" class="headerlink" title="Consumers and Consumer Groups"></a>Consumers and Consumer Groups</h4><ul>
+<li>Consumers of topics also register themselves in ZooKeeper, in order to coordinate with each other and balance the consumption of data.</li>
+<li>Consumers can also store their offsets in ZooKeeper by setting offsets.storage=zookeeper.<ul>
+<li>However, this offset storage mechanism will be deprecated in a future release. Therefore, it is recommended to migrate offsets storage to Kafka.</li>
+</ul>
+</li>
+<li>Multiple consumers can form a group and jointly consume a single topic.<ul>
+<li>Each consumer in the same group is given a shared group_id.</li>
+<li>This group id is provided in the configuration of the consumer.</li>
+<li>Each partition is consumed by exactly one consumer in a consumer group.</li>
+</ul>
+</li>
+</ul>
+<h4 id="Consumer-Id-Registry"><a href="#Consumer-Id-Registry" class="headerlink" title="Consumer Id Registry"></a>Consumer Id Registry</h4><ul>
+<li>In addition to the group_id which is shared by all consumers in a group, each consumer is given a transient, unique consumer_id (of the form hostname:uuid) for identification purposes.<br><code>/consumers/[group_id]/ids/[consumer_id] --&gt; {&quot;version&quot;:...,&quot;subscription&quot;:{...:...},&quot;pattern&quot;:...,&quot;timestamp&quot;:...} (ephemeral node)</code></li>
+</ul>
+<h4 id="Consumer-Offsets"><a href="#Consumer-Offsets" class="headerlink" title="Consumer Offsets"></a>Consumer Offsets</h4><p><em>if offsets.storage=zookeeper</em><br><code>/consumers/[group_id]/offsets/[topic]/[partition_id] --&gt; offset_counter_value (persistent node)</code></p>
+<h4 id="Partition-Owner-registry"><a href="#Partition-Owner-registry" class="headerlink" title="Partition Owner registry"></a>Partition Owner registry</h4><ul>
+<li>Each broker partition is consumed by a single consumer within a given consumer group. The consumer must establish its ownership of a given partition before any consumption can begin. To establish its ownership, a consumer writes its own id in an ephemeral node under the particular broker partition it is claiming.<br><code>/consumers/[group_id]/owners/[topic]/[partition_id] --&gt; consumer_node_id (ephemeral node)</code></li>
+</ul>
+<h4 id="Cluster-Id"><a href="#Cluster-Id" class="headerlink" title="Cluster Id"></a>Cluster Id</h4><ul>
+<li>The cluster id is a unique and immutable identifier assigned to a Kafka cluster.</li>
+<li>auto-generated<br><code>/cluster/id</code></li>
+</ul>
+<h4 id="Broker-node-registration"><a href="#Broker-node-registration" class="headerlink" title="Broker node registration"></a>Broker node registration</h4><h4 id="Consumer-registration-algorithm"><a href="#Consumer-registration-algorithm" class="headerlink" title="Consumer registration algorithm"></a>Consumer registration algorithm</h4><p>When a consumer starts, it does the following:</p>
+<ol>
+<li>Register itself in the consumer id registry under its group (<code>/kafka/consumers/[group_id]/ids</code>).</li>
+<li>Register a watch on changes (new consumers joining or any existing consumers leaving) under the consumer id registry. (Each change triggers rebalancing among all consumers within the group to which the changed consumer belongs.)</li>
+<li>Register a watch on changes (new brokers joining or any existing brokers leaving) under the broker id registry (<code>/kafka/brokers/ids</code>). (Each change triggers rebalancing among all consumers in all consumer groups.)</li>
+<li>If the consumer creates a message stream using a topic filter, it also registers a watch on changes (new topics being added) under the broker topic registry (<code>/kafka/brokers/topics</code>). (Each change will trigger re-evaluation of the available topics to determine which topics are allowed by the topic filter. A new allowed topic will trigger rebalancing among all consumers within the consumer group.)</li>
+<li>Force itself to rebalance within in its consumer group.</li>
+</ol>
+<h4 id="Consumer-rebalancing-algorithm"><a href="#Consumer-rebalancing-algorithm" class="headerlink" title="Consumer rebalancing algorithm"></a>Consumer rebalancing algorithm</h4><p>Each consumer does the following during rebalancing:</p>
+<ol>
+<li>For each topic T that C<sub>i</sub> subscribes to</li>
+<li>let P<sub>T</sub> be all partitions producing topic T</li>
+<li>let C<sub>G</sub> be all consumers in the same group as C<sub>i</sub> that consume topic T</li>
+<li>sort P<sub>T</sub> (so partitions on the same broker are clustered together)</li>
+<li>sort C<sub>G</sub></li>
+<li>let i be the index position of C<sub>i</sub> in C<sub>G</sub> and let N = size(P<sub>T</sub>)/size(C<sub>G</sub>)</li>
+<li>assign partitions from i<em>N to (i+1)</em>N - 1 to consumer C<sub>i</sub></li>
+<li>remove current entries owned by C<sub>i</sub> from the partition owner registry</li>
+<li>add newly assigned partitions to the partition owner registry<br>   (we may need to re-try this until the original partition owner releases its ownership)</li>
+</ol>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a href="https://kafka.apache.org/documentation/#design" target="_blank" rel="noopener">Kafka Design &amp; Implementation</a></li>
+<li><a href="https://www.ibm.com/developerworks/library/j-zerocopy/index.html" target="_blank" rel="noopener">Efficient data transfer through zero copy</a></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/31/2018/01/audience_geo_analysis_using_spark_postgis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/31/2018/01/audience_geo_analysis_using_spark_postgis/" itemprop="url">Audience Geo Analysis using Spark + PostGIS</a></h1>
         
 
         <div class="post-meta">
@@ -453,7 +867,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/27/201801/bad-idea-using-spark-with-s3-md/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/27/2018/01/bad-idea-using-spark-with-s3-md/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -472,7 +886,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/27/201801/bad-idea-using-spark-with-s3-md/" itemprop="url">Bad Idea Using SparkSQL with S3</a></h1>
+                <a class="post-title-link" href="/2018/01/27/2018/01/bad-idea-using-spark-with-s3-md/" itemprop="url">Bad Idea Using SparkSQL with S3</a></h1>
         
 
         <div class="post-meta">
@@ -636,7 +1050,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/24/201801/window-frame-in-postgresl-spark/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/24/2018/01/window-frame-in-postgresl-spark/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -655,7 +1069,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/24/201801/window-frame-in-postgresl-spark/" itemprop="url">Window Frame in PostgreSQL and SparkSQL</a></h1>
+                <a class="post-title-link" href="/2018/01/24/2018/01/window-frame-in-postgresl-spark/" itemprop="url">Window Frame in PostgreSQL and SparkSQL</a></h1>
         
 
         <div class="post-meta">
@@ -795,7 +1209,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/23/201801/use-overridable-in-constructor-in-cpp-java-scala-md/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/23/2018/01/use-overridable-in-constructor-in-cpp-java-scala-md/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -814,7 +1228,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/23/201801/use-overridable-in-constructor-in-cpp-java-scala-md/" itemprop="url">Use Overridable in Constructor in C++, Java and Scala</a></h1>
+                <a class="post-title-link" href="/2018/01/23/2018/01/use-overridable-in-constructor-in-cpp-java-scala-md/" itemprop="url">Use Overridable in Constructor in C++, Java and Scala</a></h1>
         
 
         <div class="post-meta">
@@ -978,7 +1392,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/201801/cut_csv_in_dos/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/19/2018/01/cut_csv_in_dos/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -997,7 +1411,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/19/201801/cut_csv_in_dos/" itemprop="url">Weird Result when Cut CSV Files in DOS Format</a></h1>
+                <a class="post-title-link" href="/2018/01/19/2018/01/cut_csv_in_dos/" itemprop="url">Weird Result when Cut CSV Files in DOS Format</a></h1>
         
 
         <div class="post-meta">
@@ -1130,7 +1544,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/201801/enable_public_host_name_in_spark_webui/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/2018/01/enable_public_host_name_in_spark_webui/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -1149,7 +1563,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/11/201801/enable_public_host_name_in_spark_webui/" itemprop="url">Enable Public Host Name in Spark Web UI</a></h1>
+                <a class="post-title-link" href="/2018/01/11/2018/01/enable_public_host_name_in_spark_webui/" itemprop="url">Enable Public Host Name in Spark Web UI</a></h1>
         
 
         <div class="post-meta">
@@ -1278,7 +1692,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/201801/redirect_with_sudo/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/2018/01/redirect_with_sudo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -1297,7 +1711,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/11/201801/redirect_with_sudo/" itemprop="url">Permission Denied when sudo with io redirect</a></h1>
+                <a class="post-title-link" href="/2018/01/11/2018/01/redirect_with_sudo/" itemprop="url">Permission Denied when sudo with io redirect</a></h1>
         
 
         <div class="post-meta">
@@ -1432,7 +1846,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/10/201801/enable_spark_on_ec2_accessing_s3/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/10/2018/01/enable_spark_on_ec2_accessing_s3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -1451,7 +1865,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/10/201801/enable_spark_on_ec2_accessing_s3/" itemprop="url">Enable Spark on AWS EC2 Accessing AWS S3</a></h1>
+                <a class="post-title-link" href="/2018/01/10/2018/01/enable_spark_on_ec2_accessing_s3/" itemprop="url">Enable Spark on AWS EC2 Accessing AWS S3</a></h1>
         
 
         <div class="post-meta">
@@ -1594,7 +2008,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/03/201801/spark_class_not_found/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/03/2018/01/spark_class_not_found/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -1613,7 +2027,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/03/201801/spark_class_not_found/" itemprop="url">ClassNotFoundException/SecurityException in Spark+sbt</a></h1>
+                <a class="post-title-link" href="/2018/01/03/2018/01/spark_class_not_found/" itemprop="url">ClassNotFoundException/SecurityException in Spark+sbt</a></h1>
         
 
         <div class="post-meta">
@@ -1727,228 +2141,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/02/201801/inside_map_reduce/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/02/201801/inside_map_reduce/" itemprop="url">Inside MapReduce (Spill, Shuffle and Sort)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-02T18:08:56+08:00">
-                2018-01-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hadoop/" itemprop="url" rel="index">
-                    <span itemprop="name">Hadoop</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><p>I don’t read the source code.<br>Just read some docs and have my personal understanding regarding the details of MapReduce (Version: ~hadoop 2.x).<br>So correct me if I’m wrong.<br>Some numbers below are just typical values, as well as the property names, and they could vary for different versions or due to user settings.</p>
-<p><img src="/content/images/2018/01/mapreduce.png" alt="MapReduce"><br><em>I copied this image from the web (tell me if the author doesn’t want me to do this).</em></p>
-<h1 id="Map-Side"><a href="#Map-Side" class="headerlink" title="Map Side"></a>Map Side</h1><ul>
-<li><strong>InputSplit</strong>   <ul>
-<li>For each inputsplit, MR spawns a Map task.</li>
-<li>The FileSystem blocksize of the input files is treated as an upper bound for input splits (<em>mapreduce.input.fileinputformat.split.minsize</em>).</li>
-<li>The default InputSplit size is as an HDFS block, I think. But this could be set by <em>mapreduce.map.input.length</em>.   </li>
-</ul>
-</li>
-<li><strong>Circular Buffer</strong>   <ul>
-<li>The Map output does not go directly to the disk, but a circular memoery buffer.</li>
-<li>100MB by default; can be changed by <em>mapreduce.task.io.sort.mb</em>.</li>
-<li>When the content of the buffer reaches some threadhold (<em>mapreduce.map.sort.spill.percent</em>, 80% by default), a <strong>spill</strong> will be triggered. (if a map output record is larger than the buffer, it will also trigger a spill).</li>
-</ul>
-</li>
-<li><strong>Spill</strong>   <ul>
-<li>A new thread will be started to spill the buffer records to local disk, in parallel with the mapper, if possible.</li>
-<li>The <strong>spill</strong> stage includes <strong>Partition, Sort and Combine</strong>.</li>
-<li><strong>Partition, Sort and Combine</strong><ul>
-<li>As map outputs are spilled onto local disk, the piece of data (like 80MB) will be paritioned per reducers (typicall, hash &amp; mod), sorted in memory, and combined if enabled (mini-reduce).</li>
-</ul>
-</li>
-<li>Each spill will create a new file on local disk.</li>
-<li>So after the map task has written its last output record, there could be several spill files.</li>
-<li>Before the map task is finished and its output is feteched by Reducer, the spill files will be merged into a single partitioned and sorted output file.<ul>
-<li>The property <strong><em>io.sort.factor</em></strong> will tell the maximum numbers of spill files  that can be merge in one go, which is also used in Reduer Merge Sort. </li>
-<li>It’s said that if there’re 3+ spill files, combiner will be applied again during the creation of the final map output file.</li>
-</ul>
-</li>
-<li>If <strong>compression</strong> is enabled, before the final map output is written onto disk, the map output will be compressed (and uncompressed in the Reducer side).</li>
-<li>Now, the map output is a single sorted, partitioned, compact local file, which is ready to be fetched by Reducers via HTTP.<ul>
-<li><strong>Why HTTP?</strong> Because it’s a local file, not HDFS blocks.</li>
-<li>And that’s why if the cluster node failes, all Mapper tasks succeeded on it previously must be re-run, no matter if their outputs are fetched by Reducers, while all succeeded Reducers tasks don’t need.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="Reduce-Side"><a href="#Reduce-Side" class="headerlink" title="Reduce Side"></a>Reduce Side</h1><p>The Reduce stage consists of <strong>Shuffle, Sort (also called Merge) and Reduce</strong>.</p>
-<ul>
-<li><strong>Shuffle</strong><ul>
-<li>Shuffling is the process of copying mapper outpus to reducers.</li>
-<li>When does shuffle start?<ul>
-<li>This can happen while mappers are generating data since it is only a data transfer.</li>
-<li>On the other hand, sort and reduce can only start once all the mappers are done.</li>
-<li>You can tell which one MapReduce is doing by looking at the reducer completion percentage:<ul>
-<li>0-33% means its doing shuffle,</li>
-<li>34-66% is sort,</li>
-<li>67%-100% is reduce.</li>
-</ul>
-</li>
-<li>This is why your reducers will sometimes seem “stuck” at 33%– it’s waiting for mappers to finish.</li>
-</ul>
-</li>
-<li>So, when, exactly?<ul>
-<li>Reducers start shuffling based on a threshold of percentage of mappers that have finished (<em>mapreduce.job.reduce.slowstart.completedmap</em>）.</li>
-</ul>
-</li>
-<li>Reducers starts several threads (5 by default) to fetch mapper outputs in parallel.</li>
-<li>The map outputs are copied to the reduce task JVM’s memory if they are small enough (<em>mapred.job.shuffle.input.buffer.percent</em>); otherwise they are copied to disk .</li>
-</ul>
-</li>
-<li><strong>Merge/Sort</strong><ul>
-<li>When all the map outputs have been copied, the reduce task moves into the <strong>sort</strong> phase (actually <strong>merge sort</strong>), which merges the map outputs, maintaining their sort ordering.</li>
-<li>This is done in rounds.</li>
-<li>For example,<ul>
-<li>if there were 50 map outputs and the merge factor was 10 (<strong><em>io.sort.factor</em>, just like in the map’s merge</strong>), there would be 5 rounds.</li>
-<li>Each round would merge 10 files into one, so at the end there would be 5 intermediate files.</li>
-<li>Rather than have a final round that merges these 5 files into a single sorted file, the merge saves a trip to disk by directly feeding the reduce function in what is the last phase: the reduce phase.</li>
-<li>This final merge can come from a mixture of in-memory and on-disk segments, as the last merge round could keep some data in memroy and then start the final reduce job (<strong><em>mapreduce.reduce.input.buffer.percent</em></strong>).</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>Reduce</strong><ul>
-<li>During the reduce phase, the reduce function is invoked for each key in the sorted output.</li>
-<li>The output of this phase is written directly to the output filesystem, typically HDFS, in which case the first block replica will generally be written to the local disk managed by the datanode.</li>
-</ul>
-</li>
-</ul>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html" target="_blank" rel="noopener">MapReduce Tutorial</a><br><a href="https://developer.yahoo.com/hadoop/tutorial/module4.html" target="_blank" rel="noopener">Module 4: MapReduce</a><br><a href="http://dailyhadoopsoup.blogspot.com/2014/01/shuffle-and-sort.html" target="_blank" rel="noopener">http://dailyhadoopsoup.blogspot.hk/2014/01/shuffle-and-sort.html</a><br><a href="https://haritbigdata.wordpress.com/2015/07/21/hadoop-inside-mapreduce-process-of-shuffling-sorting-part-ii/" target="_blank" rel="noopener">Hadoop :- Inside MapReduce ( Process of Shuffling , sorting ) – Part II</a><br><a href="https://stackoverflow.com/questions/11672676/when-do-reduce-tasks-start-in-hadoop" target="_blank" rel="noopener">When do reduce tasks start in Hadoop?</a><br><a href="https://stackoverflow.com/questions/22141631/what-is-the-purpose-of-shuffling-and-sorting-phase-in-the-reducer-in-map-reduce" target="_blank" rel="noopener">What is the purpose of shuffling and sorting phase in the reducer in Map Reduce Programming?</a><br><a href="https://www.youtube.com/watch?v=6ehu2jEEXWE" target="_blank" rel="noopener">Shuffle and Sort in hadoop</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1999,7 +2191,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2010,7 +2202,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
