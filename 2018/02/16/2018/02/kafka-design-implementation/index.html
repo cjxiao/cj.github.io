@@ -87,7 +87,7 @@
 <meta property="og:description" content="4. Design4.1 MotivationTo Support:  High throughput Large data backlogs Low latency Partitioned, distributed, real-time processing Fault tolerance  4.2 PersistenceDont’ fear the filesystem Kafka relie">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://hiack.com/content/images/2018/02/kafka-design-implementation_log_compaction_basics_1.png">
-<meta property="og:updated_time" content="2018-02-18T17:22:10.623Z">
+<meta property="og:updated_time" content="2018-02-18T17:37:37.478Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka Design &amp; Implementation">
 <meta name="twitter:description" content="4. Design4.1 MotivationTo Support:  High throughput Large data backlogs Low latency Partitioned, distributed, real-time processing Fault tolerance  4.2 PersistenceDont’ fear the filesystem Kafka relie">
@@ -445,7 +445,7 @@
 </ul>
 </li>
 </ul>
-<p>-<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">So effectively Kafka supports exactly-once delivery in Kafka Streams, and the transactional producer/consumer can be used generally to provide exactly-once delivery when transfering and processing data between Kafka topics. Exactly-once delivery for other destination systems generally requires cooperation with such systems, but Kafka provides the offset which makes implementing this feasible (see also Kafka Connect). Otherwise, Kafka guarantees at-least-once delivery by default, and allows the user to implement at-most-once delivery by disabling retries on the producer and committing offsets in the consumer prior to processing a batch of messages.</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">So effectively Kafka supports exactly-once delivery in Kafka Streams, and the transactional producer/consumer can be used generally to provide exactly-once delivery when transfering and processing data between Kafka topics. Exactly-once delivery for other destination systems generally requires cooperation with such systems, but Kafka provides the offset which makes implementing this feasible (see also Kafka Connect). Otherwise, Kafka guarantees at-least-once delivery by default, and allows the user to implement at-most-once delivery by disabling retries on the producer and committing offsets in the consumer prior to processing a batch of messages.</span><br></pre></td></tr></table></figure>
 <h2 id="4-7-Replication"><a href="#4-7-Replication" class="headerlink" title="4.7 Replication"></a>4.7 Replication</h2><ul>
 <li>All reads and writes go to the leader of the partition.</li>
 <li>Having the followers pull from the leader has the nice property of allowing the follower to naturally batch together log entries they are applying to their log.</li>
