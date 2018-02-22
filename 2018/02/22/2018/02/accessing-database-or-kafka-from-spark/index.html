@@ -82,11 +82,11 @@
 <meta name="description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Accessing Database&#x2F;Kafka from Spark">
-<meta property="og:url" content="http://hiack.com/2018/02/22/accessing-database-or-kafka-from-spark/index.html">
+<meta property="og:url" content="http://hiack.com/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-02-22T10:31:21.837Z">
+<meta property="og:updated_time" content="2018-02-22T10:34:24.652Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Accessing Database&#x2F;Kafka from Spark">
 <meta name="twitter:description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
@@ -119,7 +119,7 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/2018/02/22/accessing-database-or-kafka-from-spark/"/>
+  <link rel="canonical" href="http://hiack.com/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/"/>
 
 
 
@@ -262,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/22/accessing-database-or-kafka-from-spark/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -362,7 +362,7 @@
       
 
       
-        <h1 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h1><p>As suggested in <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html#design-patterns-for-using-foreachrdd" target="_blank" rel="noopener">Design Patterns for using foreachRDD</a>, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connections to external systems inside the RDD handler.</p>
+        <h1 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h1><p>As suggested in <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html#design-patterns-for-using-foreachrdd" target="_blank" rel="noopener">Design Patterns for using foreachRDD</a>, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. <strong>you should create connections to external systems on Spark Executors</strong>.</p>
 <p>And, in order to minimize the cost in connection creation and improve the IO throughput, the common technique for DB connections is using <strong>Connection Pool</strong>.</p>
 <p>However, when it comes to <strong>Kafka Consumer/Producer</strong>, things become different:</p>
 <ol>

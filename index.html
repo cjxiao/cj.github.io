@@ -259,7 +259,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/22/accessing-database-or-kafka-from-spark/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -278,7 +278,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/02/22/accessing-database-or-kafka-from-spark/" itemprop="url">Accessing Database/Kafka from Spark</a></h1>
+                <a class="post-title-link" href="/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/" itemprop="url">Accessing Database/Kafka from Spark</a></h1>
         
 
         <div class="post-meta">
@@ -363,7 +363,7 @@
       
         
           
-            <h1 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h1><p>As suggested in <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html#design-patterns-for-using-foreachrdd" target="_blank" rel="noopener">Design Patterns for using foreachRDD</a>, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connections to external systems inside the RDD handler.</p>
+            <h1 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h1><p>As suggested in <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html#design-patterns-for-using-foreachrdd" target="_blank" rel="noopener">Design Patterns for using foreachRDD</a>, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. <strong>you should create connections to external systems on Spark Executors</strong>.</p>
 <p>And, in order to minimize the cost in connection creation and improve the IO throughput, the common technique for DB connections is using <strong>Connection Pool</strong>.</p>
 <p>However, when it comes to <strong>Kafka Consumer/Producer</strong>, things become different:</p>
 <ol>
