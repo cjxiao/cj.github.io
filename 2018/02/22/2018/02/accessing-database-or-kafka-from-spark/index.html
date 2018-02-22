@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-02-22T10:34:24.652Z">
+<meta property="og:updated_time" content="2018-02-22T10:36:45.022Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Accessing Database&#x2F;Kafka from Spark">
 <meta name="twitter:description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
@@ -363,10 +363,10 @@
 
       
         <h1 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h1><p>As suggested in <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html#design-patterns-for-using-foreachrdd" target="_blank" rel="noopener">Design Patterns for using foreachRDD</a>, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. <strong>you should create connections to external systems on Spark Executors</strong>.</p>
-<p>And, in order to minimize the cost in connection creation and improve the IO throughput, the common technique for DB connections is using <strong>Connection Pool</strong>.</p>
+<p>And, in order to minimize the cost in connection creation and improve system performance, the common technique for DB connection management in Spark applications is using <strong>Connection Pool</strong>.</p>
 <p>However, when it comes to <strong>Kafka Consumer/Producer</strong>, things become different:</p>
 <ol>
-<li>Kafka Producer/Consumer creation is much more time-consuming, as it needs to discover all partition leader.</li>
+<li>Kafka Producer creation is much more time-consuming, as it needs to discover all partition leader.</li>
 <li>Kafka producer is thread-safe.</li>
 </ol>
 <p>So, a better approach for Kafka accessing in Spark is taking advantage of Spark <a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#broadcast-variables" target="_blank" rel="noopener">Broadcast Variables</a> and Scala <code>lazy val</code>.</p>
