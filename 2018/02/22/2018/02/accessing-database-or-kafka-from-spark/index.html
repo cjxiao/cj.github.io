@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-02-26T02:44:16.072Z">
+<meta property="og:updated_time" content="2018-02-26T02:47:06.324Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Accessing Database&#x2F;Kafka from Spark">
 <meta name="twitter:description" content="ProblemAs suggested in Design Patterns for using foreachRDD, when you access external systems from withn RDD handler, cautions must be taken to avoid the common mistakes, ie. you should create connect">
@@ -369,7 +369,7 @@
 <li>Kafka Producer creation is much more time-consuming, as it needs to discover all partition leader.</li>
 <li>Kafka producer is thread-safe.</li>
 </ol>
-<p>So, a better approach for Kafka accessing in Spark is taking advantage of Spark <a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#broadcast-variables" target="_blank" rel="noopener">Broadcast Variables</a> and Scala <code>lazy val</code>.</p>
+<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>A better approach for Kafka access in Spark is taking advantage of Spark <a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#broadcast-variables" target="_blank" rel="noopener">Broadcast Variables</a> and Scala <code>lazy val</code>.</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> kafkaSink = sparkContext.broadcast(<span class="type">KafkaSink</span>(conf))</span><br><span class="line"></span><br><span class="line">dstream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">  rdd.foreach &#123; message =&gt;</span><br><span class="line">    kafkaSink.value.send(message)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">KafkaSink</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>(config: <span class="type">Map</span>[<span class="type">String</span>, <span class="type">Object</span>]): <span class="type">KafkaSink</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> f = () =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> producer = <span class="keyword">new</span> <span class="type">KafkaProducer</span>[<span class="type">String</span>, <span class="type">String</span>](config)</span><br><span class="line"></span><br><span class="line">      sys.addShutdownHook &#123;</span><br><span class="line">        producer.close()</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      producer</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">new</span> <span class="type">KafkaSink</span>(f)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>For details, refert to <a href="https://allegro.tech/2015/08/spark-kafka-integration.html" target="_blank" rel="noopener">Spark and Kafka integration patterns</a>.</p>
@@ -539,7 +539,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Problem"><span class="nav-number">1.</span> <span class="nav-text">Problem</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Problem"><span class="nav-number">1.</span> <span class="nav-text">Problem</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Solution"><span class="nav-number">2.</span> <span class="nav-text">Solution</span></a></li></ol></div>
             
 
           </div>
