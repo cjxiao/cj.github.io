@@ -259,148 +259,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/27/2018/02/leetcode-91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/27/2018/02/leetcode-91/" itemprop="url">Leetcode 91 - Decode Ways</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-27T18:33:27+08:00">
-                2018-02-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index">
-                    <span itemprop="name">Algorithm</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>The idea is to check invalid ‘0’s, or merge and remove them with their valid combinations.<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">numDecodings</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (s.empty() || s[<span class="number">0</span>] == <span class="string">'0'</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt; del(s.size(), <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.size(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[i] &lt; <span class="string">'0'</span> || s[i] &gt; <span class="string">'9'</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">if</span> (s[i] == <span class="string">'0'</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s[i<span class="number">-1</span>] != <span class="string">'1'</span> &amp;&amp; s[i<span class="number">-1</span>] != <span class="string">'2'</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">else</span> del[i<span class="number">-1</span>] = del[i] = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">string</span> s2;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.size(); ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!del[i]) s2.push_back(s[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">auto</span> len = s2.size();</span><br><span class="line">        <span class="keyword">if</span> (len == <span class="number">0</span> || len == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; cnt(s2.size(), <span class="number">0</span>);</span><br><span class="line">        cnt[len - <span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> r1 = s2[len - <span class="number">1</span>] - <span class="string">'0'</span>;</span><br><span class="line">        <span class="keyword">int</span> r2 = s2[len - <span class="number">2</span>] - <span class="string">'0'</span>;</span><br><span class="line">        <span class="keyword">auto</span> x = r2 * <span class="number">10</span> + r1;</span><br><span class="line">        <span class="keyword">if</span> (x &gt; <span class="number">0</span> &amp;&amp; x &lt; <span class="number">27</span>) cnt[len - <span class="number">2</span>] = <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">else</span> cnt[len - <span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">3</span>; i &gt;= <span class="number">0</span>; --i) &#123;</span><br><span class="line">            r1 = s2[i + <span class="number">1</span>] - <span class="string">'0'</span>;</span><br><span class="line">            r2 = s2[i] - <span class="string">'0'</span>;</span><br><span class="line">            x = r2 * <span class="number">10</span> + r1;</span><br><span class="line">            <span class="keyword">if</span> (x &gt; <span class="number">0</span> &amp;&amp; x &lt; <span class="number">27</span>) cnt[i] = cnt[i+<span class="number">1</span>] + cnt[i+<span class="number">2</span>];</span><br><span class="line">            <span class="keyword">else</span> cnt[i] = cnt[i+<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cnt[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2138,6 +1996,168 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/10/2018/01/enable_spark_on_ec2_accessing_s3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/10/2018/01/enable_spark_on_ec2_accessing_s3/" itemprop="url">Enable Spark on AWS EC2 Accessing AWS S3</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-10T18:08:56+08:00">
+                2018-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark/devops/" itemprop="url" rel="index">
+                    <span itemprop="name">DevOps</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>I setup a Spark Standalone cluster on AWS EC2 (region: cn-north-1).<br>And I build a Simple Spark application in Scala, which reads from and writes to AWS S3.<br>Regarding the <code>SecurityException</code> issue, refer to <a href="http://hiack.com/2018/01/15/spark_class_not_found/">ClassNotFoundException/SecurityException in Spark+sbt</a>.  </p>
+<p>To enable Spark accessing AWS S3, some config must be taken care of, including:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--deploy-mode client \</span><br><span class="line">--driver-memory 2400m \</span><br><span class="line">--executor-memory 2400m \</span><br><span class="line">--conf spark.executor.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.driver.extraJavaOptions=-Dcom.amazonaws.services.s3.enableV4=<span class="literal">true</span> \</span><br><span class="line">--conf spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version=2 \</span><br><span class="line">--conf spark.speculation=<span class="literal">false</span> \</span><br><span class="line">--conf spark.hadoop.fs.s3a.region=cn-north-1 \</span><br><span class="line">--conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem \</span><br><span class="line">--conf spark.hadoop.fs.s3a.endpoint=s3.cn-north-1.amazonaws.com.cn \</span><br><span class="line">--conf spark.hadoop.fs.s3a.access.key=******************** \</span><br><span class="line">--conf spark.hadoop.fs.s3a.secret.key=**************************************** \</span><br></pre></td></tr></table></figure></p>
+<p>If you want to hard code them in the source code:<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.endpoint"</span>, <span class="string">"s3.cn-north-1.amazonaws.com.cn"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.impl"</span>, <span class="string">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.region"</span>, <span class="string">"cn-north-1"</span>)</span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsAccessKeyId", "********************")</span></span><br><span class="line"><span class="comment">//sc.hadoopConfiguration.set("fs.s3a.awsSecretAccessKey", "****************************************")</span></span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.access.key"</span>, <span class="string">"********************"</span>)</span><br><span class="line">sc.hadoopConfiguration.set(<span class="string">"fs.s3a.secret.key"</span>, <span class="string">"****************************************"</span>)</span><br></pre></td></tr></table></figure></p>
+<p>Or, set them in the <code>spark-env.sh</code>.  </p>
+<p>I haven’t made it work in the cluster mode, without mannually coping the jars to the cluster nodes.</p>
+<p><strong>Note:</strong>  </p>
+<ul>
+<li>There’re several ways AWS keys being captured by Spark, like spark-submit config, Spark/bash env, ~/.aws/credentials, etc. Just try it.</li>
+<li>If the input/output args to your Spark application are S3 paths, you might need to specify the paths with schema <strong><code>s3a://...</code></strong></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -2188,7 +2208,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2199,7 +2219,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
