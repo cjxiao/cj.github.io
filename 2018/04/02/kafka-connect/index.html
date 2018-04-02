@@ -79,13 +79,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="CJ&#39;s SpaceX">
-<meta property="og:url" content="http://hiack.com/tags/scala/index.html">
+<meta name="description" content="I got a requirement to load log data from AWS S3 to Kafka, which is not a common use case.I tried Confluent Kafka Platform with a 3rd-party connector, following the quick-start tutorial on my Mac.It’s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka-Connect">
+<meta property="og:url" content="http://hiack.com/2018/04/02/kafka-connect/index.html">
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
+<meta property="og:description" content="I got a requirement to load log data from AWS S3 to Kafka, which is not a common use case.I tried Confluent Kafka Platform with a 3rd-party connector, following the quick-start tutorial on my Mac.It’s">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-02T11:19:23.977Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CJ&#39;s SpaceX">
+<meta name="twitter:title" content="Kafka-Connect">
+<meta name="twitter:description" content="I got a requirement to load log data from AWS S3 to Kafka, which is not a common use case.I tried Confluent Kafka Platform with a 3rd-party connector, following the quick-start tutorial on my Mac.It’s">
 
 
 
@@ -115,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://hiack.com/tags/scala/"/>
+  <link rel="canonical" href="http://hiack.com/2018/04/02/kafka-connect/"/>
 
 
 
 
 
-  <title>Tag: Scala | CJ's SpaceX</title>
+  <title>Kafka-Connect | CJ's SpaceX</title>
   
 
 
@@ -140,7 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -244,54 +248,182 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Scala<small>Tag</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/04/02/kafka-connect/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/01/23/2018/01/use-overridable-in-constructor-in-cpp-java-scala-md/" itemprop="url">
-              
-                <span itemprop="name">Use Overridable in Constructor in C++, Java and Scala</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Kafka-Connect</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-23T14:18:28+08:00"
-              content="2018-01-23" >
-          01-23
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-02T17:34:24+08:00">
+                2018-04-02
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kafka/aws-s3/" itemprop="url" rel="index">
+                    <span itemprop="name">AWS S3</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>I got a requirement to load log data from AWS S3 to Kafka, which is not a common use case.<br>I tried <a href="https://www.confluent.io/product/connectors/" target="_blank" rel="noopener">Confluent Kafka Platform</a> with a <a href="https://github.com/mmolimar/kafka-connect-fs" target="_blank" rel="noopener">3rd-party connector</a>, following the quick-start tutorial on my Mac.<br>It’s not a pleasant experience.  </p>
+<p>The 3rd-party connector is not quite easy to use, and seems not quite reliable. For example,</p>
+<ol>
+<li><p>Access AWS S3 in China Region<br>I wasted a lot of time to find why the connector cannot access AWS S3 in China. It turns out the <code>export AWS_REGION=cn-north-1</code> doesn’t work. The connector doesn’t give the conf entries to specify the AWS S3 endpoint, so I have to modify the source code to configure the AWS endpoint.</p>
+</li>
+<li><p>OOM<br>After the connector is finally able to access AWS S3 in China, it can process a small file set and load to Kafka, but will run into OOM if the file size gets a little bit larger, like 500MB.</p>
+</li>
+</ol>
+<p>I don’t want to be stuck on this.<br>Maybe I will create a simple Spark application to read AWS S3 and push the log to Kafka.</p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/22/2018/02/accessing-database-or-kafka-from-spark/" rel="next" title="Accessing Database/Kafka from Spark">
+                <i class="fa fa-chevron-left"></i> Accessing Database/Kafka from Spark
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -299,6 +431,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -515,6 +651,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
