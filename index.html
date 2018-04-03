@@ -259,7 +259,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/04/02/kafka-connect/">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/04/02/2018/04/kafka-connect/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CJ">
@@ -278,7 +278,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/02/kafka-connect/" itemprop="url">Kafka-Connect</a></h1>
+                <a class="post-title-link" href="/2018/04/02/2018/04/kafka-connect/" itemprop="url">Kafka-Connect</a></h1>
         
 
         <div class="post-meta">
@@ -364,14 +364,15 @@
         
           
             <p>I got a requirement to load log data from AWS S3 to Kafka, which is not a common use case.<br>I tried <a href="https://www.confluent.io/product/connectors/" target="_blank" rel="noopener">Confluent Kafka Platform</a> with a <a href="https://github.com/mmolimar/kafka-connect-fs" target="_blank" rel="noopener">3rd-party connector</a>, following the quick-start tutorial on my Mac.<br>It’s not a pleasant experience.  </p>
-<p>The 3rd-party connector is not quite easy to use, and seems not quite reliable. For example,</p>
+<p>The 3rd-party connector doesn’t support AWS S3 well, and seems not quite reliable. For example,</p>
 <ol>
-<li><p>Access AWS S3 in China Region<br>I wasted a lot of time to find why the connector cannot access AWS S3 in China. It turns out the <code>export AWS_REGION=cn-north-1</code> doesn’t work. The connector doesn’t give the conf entries to specify the AWS S3 endpoint, so I have to modify the source code to configure the AWS endpoint.</p>
+<li><p>Insufficient config entries<br>I wasted a lot of time to find why the connector cannot access AWS S3 in China region. I know it’s about the AWS ID and region settings, and tried all <code>expoprt</code>s I can find. Still not working…<br>It turns out the <code>export AWS_REGION=cn-north-1</code> doesn’t work. And as the connector doesn’t give the conf entries to specify the AWS S3 endpoint, I have to modify the source code to configure it, like</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">+            fsConfig.set(<span class="string">"fs.s3a.endpoint"</span>, <span class="string">"s3.cn-north-1.amazonaws.com.cn"</span>);</span><br><span class="line">+            fsConfig.set(<span class="string">"fs.s3a.region"</span>, <span class="string">"cn-north-1"</span>);</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>OOM<br>After the connector is finally able to access AWS S3 in China, it can process a small file set and load to Kafka, but will run into OOM if the file size gets a little bit larger, like 500MB.</p>
+<li><p>OOM<br>After the connector is finally able to access AWS S3 China region, it can process only a small file set and load it to Kafka, but will run into OOM if the file size gets a little bit larger, like 500MB.<br>I tuned the JVM options; it improved a little bit, but finally still failed.  </p>
 </li>
 </ol>
-<p>I don’t want to be stuck on this.<br>Maybe I will create a simple Spark application to read AWS S3 and push the log to Kafka.</p>
+<p>I don’t want to be stuck on this.<br>Maybe I will create a simple Spark application to read AWS S3 and push the log to Kafka. Spark is cool.</p>
 
           
         
