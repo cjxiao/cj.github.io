@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="CJ&#39;s SpaceX">
 <meta property="og:description" content="I have a Spark Streaming application that consumes log events from Kafka and produces to another Kafka topic, which I talked about previously. Now I need to handle the failure recovery issue, i.e., sa">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-06-05T09:49:20.424Z">
+<meta property="og:updated_time" content="2018-06-05T09:51:57.832Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spark foreachRDD executed on Driver">
 <meta name="twitter:description" content="I have a Spark Streaming application that consumes log events from Kafka and produces to another Kafka topic, which I talked about previously. Now I need to handle the failure recovery issue, i.e., sa">
@@ -375,8 +375,8 @@
 <p>And one <a href="https://stackoverflow.com/questions/38526896/is-foreachrdd-executed-on-the-driver?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">thread on StackOverflow</a> gives more insight on <code>foreachRDD</code>.</p>
 <blockquote>
 <p>To make this clear, if you run the following, you will see “monkey” on the driver’s stdout:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; myDStream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">&gt;   println(&quot;monkey&quot;)</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
-<p>If you run the following, you will see “monkey” on the driver’s stdout, and the filter work will be done on whatever executors the rdd is distributed across:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; myDStream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">&gt;   println(&quot;monkey&quot;)</span><br><span class="line">&gt;   rdd.filter(element =&gt; element == &quot;Save me!&quot;)</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; myDStream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">&gt;   println(&quot;monkey&quot;)</span><br><span class="line">&gt; &#125;</span><br></pre></td></tr></table></figure>
+<p>If you run the following, you will see “monkey” on the driver’s stdout, and the filter work will be done on whatever executors the rdd is distributed across:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; myDStream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">&gt;   println(&quot;monkey&quot;)</span><br><span class="line">&gt;   rdd.filter(element =&gt; element == &quot;Save me!&quot;)</span><br><span class="line">&gt; &#125;</span><br></pre></td></tr></table></figure></p>
 </blockquote>
 
       
