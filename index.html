@@ -259,6 +259,174 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/06/05/2018/06/spark-foreachrdd-executed-on-driver/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CJ">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's SpaceX">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/05/2018/06/spark-foreachrdd-executed-on-driver/" itemprop="url">Spark foreachRDD executed on Driver</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-05T17:16:03+08:00">
+                2018-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark-streaming/" itemprop="url" rel="index">
+                    <span itemprop="name">Spark Streaming</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spark-streaming/kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>I have a <code>Spark Streaming</code> application that consumes log events from <code>Kafka</code> and produces to another Kafka topic, which I talked about previously.</p>
+<p>Now I need to handle the failure recovery issue, i.e., save the Kafka offsets to be or being processed in a persistent store, which I picked <code>Zookeeper</code>.</p>
+<p>There’re some good discussions on this:</p>
+<ul>
+<li><a href="https://blog.cloudera.com/blog/2017/06/offset-management-for-apache-kafka-with-apache-spark-streaming/" target="_blank" rel="noopener">Offset Management For Apache Kafka With Apache Spark Streaming</a></li>
+<li><a href="http://aseigneurin.github.io/2016/05/07/spark-kafka-achieving-zero-data-loss.html" target="_blank" rel="noopener">Spark &amp; Kafka - Achieving zero data-loss</a></li>
+</ul>
+<p>As we need to create a connection to Zookeeper in Spark application, one important thing is to make it clear who will initiate the connection, <code>Driver</code> or <code>Executor</code>?  </p>
+<p>Fortunately, we can safely create a connection in <code>Driver</code> within <code>foreachRDD</code>, as by <a href="https://spark.apache.org/docs/latest/streaming-programming-guide.html" target="_blank" rel="noopener">Spark Programming Guide</a>, <code>foreachRDD</code> is executed on the Driver.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">foreachRDD(func)    </span><br><span class="line">The most generic output operator that applies a function, func, to each RDD generated</span><br><span class="line">from the stream. This function should push the data in each RDD to an external system,</span><br><span class="line">such as saving the RDD to files, or writing it over the network to a database. Note</span><br><span class="line">that the function func is executed in the driver process running the streaming</span><br><span class="line">application, and will usually have RDD actions in it that will force the computation of</span><br><span class="line">the streaming RDDs.</span><br></pre></td></tr></table></figure>
+<p>And one <a href="https://stackoverflow.com/questions/38526896/is-foreachrdd-executed-on-the-driver?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">thread on StackOverflow</a> gives more insight on <code>foreachRDD</code>.</p>
+<blockquote>
+<p>To make this clear, if you run the following, you will see “monkey” on the driver’s stdout:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; myDStream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">&gt;   println(&quot;monkey&quot;)</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>If you run the following, you will see “monkey” on the driver’s stdout, and the filter work will be done on whatever executors the rdd is distributed across:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; myDStream.foreachRDD &#123; rdd =&gt;</span><br><span class="line">&gt;   println(&quot;monkey&quot;)</span><br><span class="line">&gt;   rdd.filter(element =&gt; element == &quot;Save me!&quot;)</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/04/23/2018/04/timezone-in-apscheduler/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2012,154 +2180,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://hiack.com/2018/01/11/2018/01/enable_public_host_name_in_spark_webui/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's SpaceX">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/11/2018/01/enable_public_host_name_in_spark_webui/" itemprop="url">Enable Public Host Name in Spark Web UI</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-11T18:08:56+08:00">
-                2018-01-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">Spark</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>My Spark cluster (standalone) setup in AWS EC2 is assuming internal IP addresses in the WebUI (by default) for links to Master and Workers, and thus I cannot go freely among them.</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><pre><code class="bash"><span class="keyword">for</span> h <span class="keyword">in</span> $(cat slaves)
-<span class="keyword">do</span>
-  ssh &lt;user&gt;@<span class="variable">$h</span> <span class="string">"sudo sh -c \"echo export SPARK_PUBLIC_DNS=<span class="variable">$h</span> &gt;&gt; /path/to/spark/conf/spark-env.sh\""</span>
-<span class="keyword">done</span>
-</code></pre>
-<p>Don’t forget the master server.</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2210,7 +2230,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2221,7 +2241,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
